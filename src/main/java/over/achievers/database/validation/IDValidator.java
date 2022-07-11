@@ -13,6 +13,8 @@ public class IDValidator implements Validator{
     }
     @Override
     public boolean isValid(Employee employee) {
+        if(employee.getEmpNumber()<0)
+            return false;
         if(previousIDs.containsKey(employee.getEmpNumber()))
             return false;
         previousIDs.put(employee.getEmpNumber(),true);
