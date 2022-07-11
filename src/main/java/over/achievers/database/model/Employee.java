@@ -29,12 +29,12 @@ public class Employee {
         this.joiningDate = joiningDate;
         this.salary = salary;
     }
-    //TODO is valid method to be implemented
-    public boolean isValidEmployee(Validator[] validators, Employee employee)
+
+    public boolean isValidEmployee(Validator[] validators)
     {
         for(Validator v : validators)
         {
-            if(!v.isValid(employee.isValidEmployee()))
+            if(!v.isValid(this))
             {
                 return false;
             }
