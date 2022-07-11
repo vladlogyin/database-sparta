@@ -34,7 +34,7 @@ public class Employee {
     {
         for(Validator v : validators)
         {
-            if(!v.isValid(employee.isValidEmployee()))
+            if(!v.isValid(employee))
             {
                 return false;
             }
