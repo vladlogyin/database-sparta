@@ -1,5 +1,7 @@
 package over.achievers.database.model;
 
+import over.achievers.database.validation.Validator;
+
 import java.sql.Date;
 
 public class Employee {
@@ -26,6 +28,18 @@ public class Employee {
         this.dateOfBirth = dateOfBirth;
         this.joiningDate = joiningDate;
         this.salary = salary;
+    }
+    //TODO is valid method to be implemented
+    public boolean isValidEmployee(Validator[] validators, Employee employee)
+    {
+        for(Validator v : validators)
+        {
+            if(!v.isValid(employee.isValidEmployee()))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int getEmpNumber() {
