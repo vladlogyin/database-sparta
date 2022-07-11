@@ -30,11 +30,11 @@ public class Employee {
         this.salary = salary;
     }
     //TODO is valid method to be implemented
-    public boolean isValidEmployee(Validator[] validators, Employee employee)
+    public boolean isValid(Validator[] validators)
     {
         for(Validator v : validators)
         {
-            if(!v.isValid(employee))
+            if(!v.isValid(this))
             {
                 return false;
             }
