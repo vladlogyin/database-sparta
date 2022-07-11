@@ -12,16 +12,19 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        String filenameCSV="asd.csv";
+
+        Parser par2 = new Parser();
+        Employee employee = par2.parse("178566,Mrs.,Juliette,M,Rojo,F,juliette.rojo@yahoo.co.uk,5/8/1967,6/4/2011,193912");
+
+        String filenameCSV="src\\main\\java\\over\\achievers\\database\\EmployeeRecords2.csv";
         InputStream inputCSV = new FileInputStream(filenameCSV);
         Scanner sc = new Scanner(inputCSV);
         Collection<String> inputData = new ArrayList<>();
+        sc.nextLine();
         while(sc.hasNextLine())
         {
             inputData.add(sc.nextLine().trim());
         }
-
-
 
         // At this point we have a collection full of employee data 🗸
         Collection<Employee> toBeValidated = new ArrayList<>();
@@ -33,21 +36,25 @@ public class Main {
         // At this point we have a collection full of Employee objects 🗸
         Collection<Employee> valid = new ArrayList<>(); // stores valid employee data
         Collection<Employee> invalid = new ArrayList<>(); // stores invalid data, filtered out of employee collection
-        Validator[] validators=new Validator[]{new IDValidator(),new EmailValidator()};
+        Validator[] validators=new Validator[]{/*new IDValidator(),*/new EmailValidator()};
         for(Employee emp : toBeValidated)
         {
-            if(emp.isValidEmployee())
+            if(emp.isValid(validators))
             {
-
+                valid.add(emp);
             }
             else
             {
-                
+                invalid.add(emp);
             }
         }
-        //DatabaseImporter dbImporter = new DatabaseImporter(inputCSV);
+        System.out.println("No. valid: "+ valid.size()+"\nNo. invalid: " + invalid.size());
+
+        // At this point we have two collections full of Employee objects 🗸
+
+        //sendToDatabase(valid);
     }
-    class Parser
+    static class Parser
     {
         //Emp ID	Name Prefix	First Name	Middle Initial	Last Name	Gender	E Mail	Date of Birth	Date of Joining	Salary
         //178566,Mrs.,Juliette,M,Rojo,F,juliette.rojo@yahoo.co.uk,5/8/1967,6/4/2011,193912
