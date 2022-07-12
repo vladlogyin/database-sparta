@@ -1,5 +1,4 @@
 package over.achievers.database.model;
-
 import over.achievers.database.validation.Validator;
 
 import java.sql.Date;
