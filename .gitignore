@@ -5,3 +5,4 @@ target/**
 **/.DS_Store
 .idea
 .attach_pid*
+src/main/Resource/database.properties
