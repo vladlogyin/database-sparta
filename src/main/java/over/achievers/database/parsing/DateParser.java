@@ -10,11 +10,15 @@ public class DateParser {
     public static Date parse(String strDate) throws InvalidFormatException, NullPointerException
     {
         try {
-            return Date.valueOf(LocalDate.parse(strDate,dateFormat));
+            String[] tokens = strDate.split("/");
+            int month = Integer.parseInt(tokens[0]);
+            int day = Integer.parseInt(tokens[1]);
+            int year = Integer.parseInt(tokens[2]);
+            return Date.valueOf(LocalDate.of(year,month,day));
         }
-        catch( DateTimeParseException e)
+        catch( NumberFormatException e)
         {
-            throw new InvalidFormatException("Issue with date format: "+e.getMessage());
+            throw new InvalidFormatException("Issue with date format");
         }
 
     }
