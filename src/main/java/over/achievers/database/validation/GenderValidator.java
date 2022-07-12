@@ -5,6 +5,7 @@ import over.achievers.database.model.Employee;
 public class GenderValidator implements Validator{
     @Override
     public boolean isValid(Employee employee) {
-        return true;
+        var gender = employee.getGender();
+        return ((gender == 'M') || (gender == 'F'));
     }
 }
