@@ -1,6 +1,7 @@
 package over.achievers.database.parsing;
 
 import java.sql.Date;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -18,7 +19,11 @@ public class DateParser {
         }
         catch( NumberFormatException e)
         {
-            throw new InvalidFormatException("Issue with date format");
+            throw new InvalidFormatException("Issue with date format: "+e.getMessage());
+        }
+        catch (DateTimeException e)
+        {
+            throw new InvalidFormatException("Issue with date format: "+e.getMessage());
         }
 
     }
