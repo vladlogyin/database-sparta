@@ -25,7 +25,6 @@ public class Main {
         {
             inputData.add(sc.nextLine().trim());
         }
-
         // At this point we have a collection full of employee data 🗸
         Collection<Employee> toBeValidated = new ArrayList<>();
         Parser par = new Parser();
