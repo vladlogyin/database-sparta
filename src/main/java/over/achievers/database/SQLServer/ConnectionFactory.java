@@ -1,4 +1,4 @@
-package com.sparta.sakila;
+package over.achievers.database.SQLServer;
 
 import java.io.FileReader;
 import java.io.IOException;
