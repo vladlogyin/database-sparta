@@ -31,4 +31,12 @@ class EmailValidatorTest {
         Assertions.assertEquals(true, emailValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("Numerical email")
+    void testNumericalEmail(){
+        // Email: 12345
+        Employee employee = employeeParser.parse("2,Mr.,John,A,Wall,M,12345,2/11/1998,2/16/2015,103912");
+        Assertions.assertEquals(false, emailValidator.isValid(employee));
+    }
+
 }
