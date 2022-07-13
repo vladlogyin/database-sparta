@@ -1,7 +1,6 @@
 package over.achievers.database.validation;
 
 import over.achievers.database.model.Employee;
-//  JoiningDate: cannot be before the dateOfBirth and cannot be in the future;
 
 public class DateValidator implements Validator{
     @Override
