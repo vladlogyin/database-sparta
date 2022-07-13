@@ -55,4 +55,12 @@ class EmailValidatorTest {
         Assertions.assertEquals(true, emailValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("Email without @")
+    void testEmailWithoutAt(){
+        // Email: h4rr3y__12verizon.net
+        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,F,h4rr3y__12verizon.net,12/10/1990,9/10/2010,118412");
+        Assertions.assertEquals(false, emailValidator.isValid(employee));
+    }
+
 }
