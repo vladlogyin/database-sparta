@@ -37,4 +37,12 @@ class IDValidatorTest {
         Assertions.assertEquals(false, idValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("0 ID")
+    void testZeroID(){
+        // ID: 0
+        Employee employee = employeeParser.parse("0,Mr.,Khabib,A,Nurmagomedov,M,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
+        Assertions.assertEquals(true, idValidator.isValid(employee));
+    }
+
 }
