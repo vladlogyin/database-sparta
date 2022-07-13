@@ -29,4 +29,11 @@ class GenderValidatorTest {
         Assertions.assertEquals(true, genderValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("Female")
+    void testFemaleGender(){
+        Employee employee = employeeParser.parse("2,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
+        Assertions.assertEquals(true, genderValidator.isValid(employee));
+    }
+
 }
