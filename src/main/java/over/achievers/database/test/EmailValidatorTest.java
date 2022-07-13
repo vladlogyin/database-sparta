@@ -51,7 +51,7 @@ class EmailValidatorTest {
     @DisplayName("Mixed email")
     void testMixedEmail(){
         // Email: h4rr3y__12@verizon.net
-        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,F,h4rr3y__12@verizon.net,12/10/1990,9/10/2010,118412");
+        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,M,h4rr3y__12@verizon.net,12/10/1990,9/10/2010,118412");
         Assertions.assertEquals(true, emailValidator.isValid(employee));
     }
 
@@ -59,7 +59,7 @@ class EmailValidatorTest {
     @DisplayName("Email without @")
     void testEmailWithoutAt(){
         // Email: h4rr3y__12verizon.net
-        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,F,h4rr3y__12verizon.net,12/10/1990,9/10/2010,118412");
+        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,M,h4rr3y__12verizon.net,12/10/1990,9/10/2010,118412");
         Assertions.assertEquals(false, emailValidator.isValid(employee));
     }
 
@@ -67,7 +67,15 @@ class EmailValidatorTest {
     @DisplayName("Email without dot")
     void testEmailWithoutDot(){
         // Email: h4rr3y__12@verizonnet
-        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,F,h4rr3y__12@verizonnet,12/10/1990,9/10/2010,118412");
+        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,M,h4rr3y__12@verizonnet,12/10/1990,9/10/2010,118412");
+        Assertions.assertEquals(false, emailValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Empty email")
+    void testEmptyEmail(){
+        // Email:
+        Employee employee = employeeParser.parse("4,Ms.,Adriana,L,Rodman,F,,3/1/1995,12/12/1007,293048");
         Assertions.assertEquals(false, emailValidator.isValid(employee));
     }
 
