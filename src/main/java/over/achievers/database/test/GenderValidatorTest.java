@@ -25,6 +25,7 @@ class GenderValidatorTest {
     @Test
     @DisplayName("Male")
     void testMaleGender(){
+        // Gender: M
         Employee employee = employeeParser.parse("1,Mr.,Mike,B,Victor,M,mikevic@gmail.com,7/12/1954,1/11/1978,346138");
         Assertions.assertEquals(true, genderValidator.isValid(employee));
     }
@@ -32,8 +33,17 @@ class GenderValidatorTest {
     @Test
     @DisplayName("Female")
     void testFemaleGender(){
+        // Gender: F
         Employee employee = employeeParser.parse("2,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
         Assertions.assertEquals(true, genderValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Invalid letter")
+    void testInvalidLetterGender(){
+        // Gender: X
+        Employee employee = employeeParser.parse("2,Mrs.,Ronda,W,Jackson,X,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
+        Assertions.assertEquals(false, genderValidator.isValid(employee));
     }
 
 }
