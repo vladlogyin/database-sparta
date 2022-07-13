@@ -30,4 +30,12 @@ class DOBValidatorTest {
         Assertions.assertEquals(true, dobValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("DoB in future")
+    void testDoBInFuture(){
+        // DoB: 10/12/2028
+        Employee employee = employeeParser.parse("2,Mr.,Andrei,T,Kirilenko,M,andreiii99@gmail.com,10/12/2028,2/4/1995,401930");
+        Assertions.assertEquals(false, dobValidator.isValid(employee));
+    }
+
 }
