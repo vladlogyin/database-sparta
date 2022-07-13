@@ -35,4 +35,11 @@ class SalaryValidatorTest {
         Assertions.assertEquals(false, salaryValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("0 salary")
+    void testZeroSalary(){
+        Employee employee = employeeParser.parse("1,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,0");
+        Assertions.assertEquals(false, salaryValidator.isValid(employee));
+    }
+
 }
