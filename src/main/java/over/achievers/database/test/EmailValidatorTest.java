@@ -42,9 +42,17 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Symbolic email")
     void testSymbolicEmail(){
-        // Email: 12345
-        Employee employee = employeeParser.parse("2,Mr.,Russel,D,Westbrook,M,~@@~:}{:@,12/21/976,9/11/2012,909010");
+        // Email: ~@@~:}{:@
+        Employee employee = employeeParser.parse("2,Mr.,Russel,D,Westbrook,M,~@@~:}{:@,12/21/1976,9/11/2012,909010");
         Assertions.assertEquals(false, emailValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Mixed email")
+    void testMixedEmail(){
+        // Email: h4rr3y__12@verizon.net
+        Employee employee = employeeParser.parse("3,Mr.,Harry,P,Sherman,F,h4rr3y__12@verizon.net,12/10/1990,9/10/2010,118412");
+        Assertions.assertEquals(true, emailValidator.isValid(employee));
     }
 
 }
