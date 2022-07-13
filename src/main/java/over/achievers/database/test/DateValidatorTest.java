@@ -34,7 +34,7 @@ class DateValidatorTest {
 
     @Test
     @DisplayName("Join date before DoB")
-    void testJoiningDateBeforeDob(){
+    void testJoiningDateBeforeDoB(){
         // DoB: 5/11/2019   Joining Date: 3/8/2005
         Employee employee = employeeParser.parse("2,Mr.,Jason,L,Kidd,M,jkidd6@gmail.com,5/11/2019,3/8/2005,489101");
         Assertions.assertEquals(false, dateValidator.isValid(employee));
@@ -49,8 +49,8 @@ class DateValidatorTest {
     }
 
     @Test
-    @DisplayName("Join date after future")
-    void testJoiningDateAfterFuture(){
+    @DisplayName("Join date in future")
+    void testJoiningDateInFuture(){
         // Joining Date: 11/9/2048
         Employee employee = employeeParser.parse("4,Ms.,Dana,Z,White,F,dwh1te34@msn.com,2/18/1998,11/9/2048,378162");
         Assertions.assertEquals(false, dateValidator.isValid(employee));
