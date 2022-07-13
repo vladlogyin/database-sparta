@@ -54,4 +54,12 @@ class GenderValidatorTest {
         Assertions.assertEquals(false, genderValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("Symbol")
+    void testSymbolGender(){
+        // Gender: #
+        Employee employee = employeeParser.parse("2,Mrs.,Ronda,W,Jackson,#,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
+        Assertions.assertEquals(false, genderValidator.isValid(employee));
+    }
+
 }
