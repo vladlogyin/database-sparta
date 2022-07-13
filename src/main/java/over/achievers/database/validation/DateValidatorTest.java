@@ -31,4 +31,12 @@ class DateValidatorTest {
         Assertions.assertEquals(true, dateValidator.isValid(employee));
     }
 
+    @Test
+    @DisplayName("Join date before DoB")
+    void testJoiningDateBeforeDob(){
+        // DoB: 5/11/2019   Joining Date: 3/8/2005
+        Employee employee = employeeParser.parse("2,Mr.,Jason,L,Kidd,M,jkidd6@gmail.com,5/11/2019,3/8/2005,489101");
+        Assertions.assertEquals(false, dateValidator.isValid(employee));
+    }
+
 }
