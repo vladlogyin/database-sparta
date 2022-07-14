@@ -1,4 +1,5 @@
 package over.achievers.database.model;
+import over.achievers.database.parsing.DateParser;
 import over.achievers.database.validation.Validator;
 
 import java.sql.Date;
@@ -119,5 +120,31 @@ public class Employee {
 
     public void setSalary(int salary) {
         this.salary = salary;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder(200);
+        sb.append(empNumber);
+        sb.append(',');
+        sb.append(namePreference);
+        sb.append(',');
+        sb.append(firstName);
+        sb.append(',');
+        sb.append(middleName);
+        sb.append(',');
+        sb.append(lastName);
+        sb.append(',');
+        sb.append(gender);
+        sb.append(',');
+        sb.append(email);
+        sb.append(',');
+        sb.append(DateParser.unparse(dateOfBirth));
+        sb.append(',');
+        sb.append(DateParser.unparse(joiningDate));
+        sb.append(',');
+        sb.append(salary);
+        return sb.toString();
     }
 }

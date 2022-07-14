@@ -27,4 +27,8 @@ public class DateParser {
         }
 
     }
+    public static String unparse(Date date)
+    {
+        return date.toLocalDate().format(dateFormat);
+    }
 }
