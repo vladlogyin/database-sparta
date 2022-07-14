@@ -103,8 +103,9 @@ public class Employee {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public Employee setGender(char gender) {
         this.gender = gender;
+        return this;
     }
 
     public String getEmail() {
