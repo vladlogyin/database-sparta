@@ -29,6 +29,7 @@ public class EmployeeImporter {
         Scanner sc = new Scanner(inputCSV);
         Parser parser = new Parser();
 
+        sc.nextLine();
 
         while(sc.hasNextLine())
         {
