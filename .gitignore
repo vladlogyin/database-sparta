@@ -6,3 +6,4 @@ target/**
 .idea
 .attach_pid*
 src/main/Resource/database.properties
+src/main/resources/database.properties

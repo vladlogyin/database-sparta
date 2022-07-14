@@ -19,7 +19,7 @@ public class EmployeeDAO {
      */
     public static void saveFromCollectionParallelSuperFast(Collection<Employee> employeeList)
     {
-        final int threadCount=2; // Not multi-threaded yet
+        final int threadCount=8; // Not multi-threaded yet
 
         long startNano = System.nanoTime();
         Connection conn = ConnectionSingleton.getConnection();
@@ -85,8 +85,8 @@ public class EmployeeDAO {
     }
 
 
-    public static void saveFromCollectionMultithreadedSuperFast(Collection<Employee> employeeList) {
-        final int threadCount = 4;
+    public static void saveFromCollectionMultithreadedSuperFast(Collection<Employee> employeeList, int threadCount) {
+//        final int threadCount = 12;
         final Connection[] dbConnections = new Connection[threadCount];
         final Thread[] threads = new Thread[threadCount];
 
@@ -294,17 +294,10 @@ public class EmployeeDAO {
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
-            return new Employee()
-                    .setEmpNumber(rs.getInt(1))
-                    .setNamePreference(rs.getString(2))
-                    .setFirstName(rs.getString(3))
-                    .setMiddleName(rs.getString(4).charAt(0))
-                    .setLastName(rs.getString(5))
-                    .setGender(rs.getString(6).charAt(0))
-                    .setEmail(rs.getString(7))
-                    .setDateOfBirth(rs.getDate(8))
-                    .setJoiningDate(rs.getDate(9))
-                    .setSalary(rs.getInt(10));
+            StringBuffer sb = new StringBuffer();
+            for (int i = 1; i < 11; i++) {
+                sb.append(rs.getString(i)).append(" ");
+            }
         } catch (SQLException e) {
             // TODO IMPLEMENT LOGGING
             throw new RuntimeException(e);

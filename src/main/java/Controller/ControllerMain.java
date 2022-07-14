@@ -1,26 +1,17 @@
-package over.achievers.database;
+package Controller;
 
-import javassist.tools.web.Viewer;
 import over.achievers.database.SQLServer.EmployeeDAO;
 import over.achievers.database.model.Employee;
-import over.achievers.database.model.Logger;
 import over.achievers.database.parsing.EmployeeImporter;
 import over.achievers.database.parsing.Parser;
 import over.achievers.database.validation.*;
 import over.achievers.database.viewer.MainViewer;
-import over.achievers.database.viewer.NotNaturalException;
 
-import javax.swing.text.View;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+public class ControllerMain {
+    public static void start(){
         Parser par2 = new Parser();
         Employee employee = par2.parse("178566,Mrs.,Juliette,M,Rojo,F,juliette.rojo@yahoo.co.uk,5/8/1967,6/4/2011,193912");
         EmployeeDAO dao = new EmployeeDAO();
@@ -33,32 +24,28 @@ public class Main {
                 new SalaryValidator(),
                 new EmailValidator()
         };
-        var employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
+        EmployeeImporter employees = null;
+        try {
+            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         Collection<Employee> list = employees.getValidEmployees();
-        System.out.println("Multi thread performance test ");
 
+
+    }
+
+    void writeToDatabase(Collection list){
+        System.out.println("Multi thread performance test ");
         long startTime = System.nanoTime();
         EmployeeDAO.truncateTable();
         EmployeeDAO.saveFromCollectionMultithreadedSuperFast(list, 12);
         long endTime = System.nanoTime();
         System.out.println("Operation took " + (endTime - startTime) /1_000_000 +" milliseconds");
-
         MainViewer.dataLoadedMessage(3, 5);
         int empId = MainViewer.getEmpId();
         System.out.println("id entered = " + empId);
         Employee emp = EmployeeDAO.getEmployeeByID(empId);
         System.out.println(emp);
-
-//        MainViewer.displayUser(EmployeeDAO.getEmployeeByID(1));
-//        MainViewer.dataLoadedMessage();
-
-//        var employees2 = EmployeeImporter.fromCSV("src/main/Resource/EmployeeRecords1.csv", validators);
-//        Collection<Employee> list2 = employees.getValidEmployees();
-//        System.out.println("Single thread performance test ");
-//        long startTime1 = System.nanoTime();
-//        dao.saveFromCollection((List<Employee>) list2);
-//        long endTime1 = System.nanoTime();
-//        System.out.println("Operation took " + (endTime1 - startTime1) /1_000_000 +" milliseconds");
-
     }
 }
