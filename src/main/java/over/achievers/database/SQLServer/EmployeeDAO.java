@@ -4,48 +4,292 @@ package over.achievers.database.SQLServer;
 import over.achievers.database.model.Employee;
 
 import java.sql.*;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
-public class EmployeeDAO implements DAOInterface {
-    private ConnectionFactory connectionFactory;
+public class EmployeeDAO {
 
-    private final String INSERT_SQL_STATEMENT = "INSERT INTO employee (emp_number,name_preference,first_name,middle_name,last_name,gender,email,date_of_birth,joining_date,salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
-    private final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE emp_number=?";
+    private static final String INSERT_SQL_STATEMENT = "INSERT INTO employee (emp_number,name_preference,first_name,middle_name,last_name,gender,email,date_of_birth,joining_date,salary) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    private static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE emp_number=?";
+    private static final String TRUNCATE_TABLE = "truncate table employee";
 
-    public void saveFromCollection(List<Employee> employeeList){
-        for (Employee emp : employeeList){
+    /**
+     * Not safe from SQL injections
+     * @param employeeList
+     */
+    public static void saveFromCollectionParallelSuperFast(Collection<Employee> employeeList)
+    {
+        final int threadCount=2; // Not multi-threaded yet
+
+        long startNano = System.nanoTime();
+        Connection conn = ConnectionFactory.getConnection();
+        final PreparedStatement[] threadSpecificStatements = new PreparedStatement[threadCount];
+        try {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < threadCount; i++) {
+                threadSpecificStatements[i] = conn.prepareStatement(INSERT_SQL_STATEMENT);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Exception thrown during statement setup:\n" + e.toString());
+        }
+        StringBuilder query = new StringBuilder(10_000_000);
+        query.append("INSERT INTO employee (emp_number,name_preference,first_name,middle_name,last_name,gender,email,date_of_birth,joining_date,salary) VALUES ");
+        boolean first=true;
+        for(Employee emp : employeeList)
+        {
+            if(first)
+            {
+                first=false;
+
+            }
+            else
+            {
+                query.append(',');
+            }
+            query.append('(');
+            query.append(emp.getEmpNumber());
+            query.append(",'");
+            query.append(emp.getNamePreference());
+            query.append("','");
+            query.append(emp.getFirstName());
+            query.append("','");
+            query.append(emp.getMiddleName());
+            query.append("','");
+            query.append(emp.getLastName());
+            query.append("','");
+            query.append(emp.getGender());
+            query.append("','");
+            query.append(emp.getEmail());
+            query.append("','");
+            query.append(emp.getDateOfBirth().toString());
+            query.append("','");
+            query.append(emp.getJoiningDate().toString());
+            query.append("',");
+            query.append(emp.getSalary());
+            query.append(")");
+
+        }
+        query.append(";");
+        try {
+            Statement s= conn.createStatement();
+            s.execute(query.toString());
+            conn.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        long nanoDiff = System.nanoTime()-startNano;
+        double milliSeconds = nanoDiff/1E6;
+        System.out.println("Time spent:" + milliSeconds+"ms");
+    }
+
+
+    public static void saveFromCollectionMultithreadedSuperFast(Collection<Employee> employeeList) {
+        final int threadCount = 4;
+        final Connection[] dbConnections = new Connection[threadCount];
+        final PreparedStatement[] threadSpecificStatements = new PreparedStatement[threadCount];
+        final Thread[] threads = new Thread[threadCount];
+
+        long startNano = System.nanoTime();
+
+        // Assign each "thread" a new connection to the database.
+        try {
+            for (int i = 0; i < dbConnections.length; i++) {
+                // TODO add separate connections to each thread.
+                dbConnections[i] = ConnectionFactory.getConnection();
+                dbConnections[i].setAutoCommit(false);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Assign each "thread" a preparedStatement
+        try {
+            for (int i = 0; i < threadSpecificStatements.length; i++) {
+                threadSpecificStatements[i] = dbConnections[i].prepareStatement(INSERT_SQL_STATEMENT);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Assign each "thread" a sub-collection to process
+        final Employee[] array = employeeList.toArray(new Employee[0]);
+
+        for (int i = 0; i < threads.length; i++) {
+            final int arrayBegin = employeeList.size() / threadCount * i;
+            final int arrayEnd = employeeList.size() / threadCount * (i + 1);
+            final int threadID = i;
+            threads[threadID] = new Thread(() -> {
+                StringBuilder query = new StringBuilder(10_000_000);
+                query.append("INSERT INTO employee (emp_number,name_preference,first_name,middle_name,last_name,gender,email,date_of_birth,joining_date,salary) VALUES ");
+                boolean first = true;
+                for (int j = arrayBegin; j < arrayEnd; j++) {
+                    // TODO build statement
+                    if (first) {
+                        first = false;
+
+                    } else {
+                        query.append(',');
+                    }
+                    query.append('(');
+                    query.append(array[j].getEmpNumber());
+                    query.append(",'");
+                    query.append(array[j].getNamePreference());
+                    query.append("','");
+                    query.append(array[j].getFirstName());
+                    query.append("','");
+                    query.append(array[j].getMiddleName());
+                    query.append("','");
+                    query.append(array[j].getLastName());
+                    query.append("','");
+                    query.append(array[j].getGender());
+                    query.append("','");
+                    query.append(array[j].getEmail());
+                    query.append("','");
+                    query.append(array[j].getDateOfBirth().toString());
+                    query.append("','");
+                    query.append(array[j].getJoiningDate().toString());
+                    query.append("',");
+                    query.append(array[j].getSalary());
+                    query.append(")");
+                }
+                query.append(";");
+
+                try {
+                    Statement s = dbConnections[threadID].createStatement();
+                    s.execute(query.toString());
+                    dbConnections[threadID].commit();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        for (Thread thread : threads) {
+            thread.start();
+        }
+
+        System.out.println("\nWaiting...");
+        while(threads[0].isAlive()
+                && threads[1].isAlive()
+                && threads[2].isAlive()
+                && threads[3].isAlive()){
+            // fixme timing purposes only (╯°□°）╯︵ ┻━┻
+        }
+
+        long nanoDiff = System.nanoTime() - startNano;
+        double milliSeconds = nanoDiff / 1E6;
+        System.out.println("Time spent:" + milliSeconds + "ms");
+    }
+
+    public static void saveFromCollectionParallel(Collection<Employee> employeeList) {
+        final int threadCount = 2;
+
+        long startNano = System.nanoTime();
+        final Connection conn = ConnectionFactory.getConnection();
+        final PreparedStatement[] threadSpecificStatements = new PreparedStatement[threadCount];
+        try {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < threadCount; i++) {
+                threadSpecificStatements[i] = conn.prepareStatement(INSERT_SQL_STATEMENT);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Exception thrown during statement setup:\n" + e.toString());
+        }
+
+        ThreadPool.forEach(employeeList, (employee,threadID) -> {
+            saveEmployee(employee,threadSpecificStatements[threadID]);
+        }, threadCount);
+
+        try {
+            ThreadPool.forEach(Arrays.asList(threadSpecificStatements), (statement, threadID) -> {
+                try {
+                    statement.executeBatch();
+                    statement.close();
+                    conn.commit();
+
+                }
+                catch (SQLException e)
+                {
+                    throw new RuntimeException("Exception thrown in thread "+threadID+" during statement execution:\n" + e.toString());
+                }
+            }, threadCount);
+
+        }
+        catch (RuntimeException e)
+        {
+            throw new RuntimeException("Exception thrown during statement execution:\n" + e.toString());
+        }
+
+        long nanoDiff = System.nanoTime()-startNano;
+        double milliSeconds = nanoDiff/1E6;
+        System.out.println("Threads: " + threadCount + " time spent:" + milliSeconds+"ms");
+    }
+
+    public static void saveFromCollection(Collection<Employee> employeeList, Boolean autoCommit) {
+        try {
+            ConnectionFactory.getConnection().setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for (Employee emp : employeeList) {
             saveEmployee(emp);
         }
     }
-    @Override
-    public void saveEmployee(Employee employee) {
+
+    public static void saveFromCollection(Collection<Employee> employeeList) {
+        saveFromCollection(employeeList, false);
+    }
+
+    public static void truncateTable(){
         Connection conn = ConnectionFactory.getConnection();
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(INSERT_SQL_STATEMENT);
-            preparedStatement.setInt(1,employee.getEmpNumber());
-            preparedStatement.setString(2, String.valueOf((employee.getNamePreference())));
-            preparedStatement.setString(3,employee.getFirstName());
-            preparedStatement.setString(4, String.valueOf(employee.getMiddleName()));
-            preparedStatement.setString(5,employee.getLastName());
-            preparedStatement.setString(6, String.valueOf(employee.getGender()));
-            preparedStatement.setString(7,employee.getEmail());
-            preparedStatement.setDate(8,employee.getDateOfBirth());
-            preparedStatement.setDate(9,employee.getJoiningDate());
-            preparedStatement.setInt(10,employee.getSalary());
+            PreparedStatement preparedStatement = conn.prepareStatement(TRUNCATE_TABLE);
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void getEmployeeByID(Integer id) {
+    public static void saveEmployee(Employee employee) {
+        Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement saveEmployeeStatement;
+        try {
+            saveEmployeeStatement = conn.prepareStatement(INSERT_SQL_STATEMENT);
+            saveEmployee(employee, saveEmployeeStatement);
+            saveEmployeeStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static void saveEmployee(Employee employee, PreparedStatement statement) {
+        Connection conn = ConnectionFactory.getConnection();
+        try {
+            synchronized (statement) {
+                statement.setInt(1, employee.getEmpNumber());
+                statement.setString(2, String.valueOf((employee.getNamePreference())));
+                statement.setString(3, employee.getFirstName());
+                statement.setString(4, String.valueOf(employee.getMiddleName()));
+                statement.setString(5, employee.getLastName());
+                statement.setString(6, String.valueOf(employee.getGender()));
+                statement.setString(7, employee.getEmail());
+                statement.setDate(8, employee.getDateOfBirth());
+                statement.setDate(9, employee.getJoiningDate());
+                statement.setInt(10, employee.getSalary());
+                statement.addBatch();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Employee getEmployeeByID (Integer id){
         Connection conn = ConnectionFactory.getConnection();
         try {
             Statement statement = conn.createStatement();
             PreparedStatement preparedStatement = conn.prepareStatement(GET_EMPLOYEE_BY_ID);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
             StringBuffer sb = new StringBuffer();
@@ -56,5 +300,7 @@ public class EmployeeDAO implements DAOInterface {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 }
+

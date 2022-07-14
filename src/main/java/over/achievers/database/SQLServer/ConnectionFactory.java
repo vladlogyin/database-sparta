@@ -13,7 +13,7 @@ public class ConnectionFactory implements AutoCloseable {
     public static Connection getConnection(){
         Properties dbProps = new Properties();
         try {
-            dbProps.load(new FileReader("src/main/Resource/database.properties"));
+            dbProps.load(new FileReader("src/main/resources/database.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

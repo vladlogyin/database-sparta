@@ -1,9 +1,56 @@
 # Employee CSV Data Migration Project
 
-## Overall Goals
-- To read data from a ```.csv``` file (provided), parse it, populate objects and add to a collection.
-- To efficiently write the data from the objects to a relational database using ```JDBC```.
-- To demonstrate good programming practices in OOP, SOLID, design patterns, testing, logging, etc.
+## Table of Contents
+* [General Info](#general-information)
+* [Technologies Used](#technologies-used)
+* [Features](#features)
+* [Screenshots](#screenshots)
+* [Setup](#setup)
+* [Usage](#usage)
+* [Project Status](#project-status)
+* [Room for Improvement](#room-for-improvement)
+* [Contact](#contact)
+
+
+## General Information
+- Application created as part of sparta global training
+- App allow to migrate data form ```CSV``` file onto database
+
+## Technologies Used
+- SOLID
+- OOP
+- MVC
+- Builder design patter
+- Singleton design pattern
+- Collections
+- jUnit
+- Log4j
+- JDBC
+- Exceptions
+- Scanner
+
+## Features
+
+
+## Screenshots
+
+
+## Setup
+
+
+## Usage
+
+
+## Project Status
+
+
+## Room for Improvement
+
+
+
+## Contact
+
+
 
 ## Phase 1 – Initial Reading and Cleaning
 - Create a new project and write code to read data from an Employee CSV file.
