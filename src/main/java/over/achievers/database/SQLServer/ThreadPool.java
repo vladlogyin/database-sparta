@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class ThreadPool{
-    public static <E> void forEach(final Collection<E> coll, ThreadPoolTask<E> task, final int threadCount){
+    public static <E,T> void forEach(final Collection<E> coll, ThreadPoolTask<E> task, final int threadCount){
         int internalThreadCount=threadCount;
         if(internalThreadCount<=0)
         {
@@ -20,10 +20,11 @@ public class ThreadPool{
         {
             final int arrayBegin=coll.size()/internalThreadCount*i;
             final int arrayEnd=coll.size()/internalThreadCount*(i+1);
+            final int threadID=i;
             threads[i]=new Thread(()->{
                 for(int j=arrayBegin;j<arrayEnd;j++)
                 {
-                    task.run((E)array[j]);
+                    task.run((E)array[j],threadID);
                 }
             });
             threads[i].start();
@@ -32,6 +33,7 @@ public class ThreadPool{
         {
             try {
                 th.join();
+
             }
             catch(InterruptedException e)
             {

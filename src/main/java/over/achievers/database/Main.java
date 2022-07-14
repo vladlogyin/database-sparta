@@ -28,12 +28,12 @@ public class Main {
                 new SalaryValidator(),
                 new EmailValidator()
         };
-        var employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecords1.csv", validators);
+        var employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
         Collection<Employee> list = employees.getValidEmployees();
         System.out.println("Multi thread performance test ");
         long startTime = System.nanoTime();
         EmployeeDAO.truncateTable();
-        EmployeeDAO.saveFromCollectionParallel(list);
+        EmployeeDAO.saveFromCollectionParallelSuperFast(list);
         long endTime = System.nanoTime();
         System.out.println("Operation took " + (endTime - startTime) /1_000_000 +" milliseconds");
 
