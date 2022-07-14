@@ -29,7 +29,19 @@ public class Employee {
         this.joiningDate = joiningDate;
         this.salary = salary;
     }
-    //TODO is valid method to be implemented
+    public Employee()
+    {
+        empNumber=0;
+        namePreference="";
+        firstName="";
+        middleName=' ';
+        lastName="";
+        gender=' ';
+        email="";
+        dateOfBirth=new Date(0);
+        joiningDate=new Date(0);
+        salary=0;
+    }
     public boolean isValid(Validator[] validators)
     {
         for(Validator v : validators)
@@ -46,40 +58,45 @@ public class Employee {
         return empNumber;
     }
 
-    public void setEmpNumber(int empNumber) {
+    public Employee setEmpNumber(int empNumber) {
         this.empNumber = empNumber;
+        return this;
     }
 
     public String getNamePreference() {
         return namePreference;
     }
 
-    public void setNamePreference(String namePreference) {
+    public Employee setNamePreference(String namePreference) {
         this.namePreference = namePreference;
+        return this;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public Employee setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public char getMiddleName() {
         return middleName;
     }
 
-    public void setMiddleName(char middleName) {
+    public Employee setMiddleName(char middleName) {
         this.middleName = middleName;
+        return this;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public Employee setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
     public char getGender() {
@@ -94,32 +111,36 @@ public class Employee {
         return email;
     }
 
-    public void setEmail(String email) {
+    public Employee setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public Employee setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+        return this;
     }
 
     public Date getJoiningDate() {
         return joiningDate;
     }
 
-    public void setJoiningDate(Date joiningDate) {
+    public Employee setJoiningDate(Date joiningDate) {
         this.joiningDate = joiningDate;
+        return this;
     }
 
     public int getSalary() {
         return salary;
     }
 
-    public void setSalary(int salary) {
+    public Employee setSalary(int salary) {
         this.salary = salary;
+        return this;
     }
 
     @Override
