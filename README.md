@@ -6,28 +6,36 @@
 * [Features](#features)
 * [Screenshots](#screenshots)
 * [Setup](#setup)
-* [Usage](#usage)
-* [Project Status](#project-status)
-* [Room for Improvement](#room-for-improvement)
+* [MySQL](#mysql-setup)
+* [Performance upgrades](#Performance upgrades)
 * [Contact](#contact)
 
 
 ## General Information
 - Application created as part of sparta global training
-- App allow to migrate data form ```CSV``` file onto database
+- App allow to migrate data form ```CSV``` file onto database (MySql)
+- Command Line Interface
 
 ## Technologies Used
-- SOLID
-- OOP
-- MVC
-- Builder design patter
-- Singleton design pattern
-- Collections
-- jUnit
-- Log4j
-- JDBC
-- Exceptions
-- Scanner
+
+- [SOLID](https://en.wikipedia.org/wiki/SOLID)
+- [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming)
+- [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
+- [MySQL](https://en.wikipedia.org/wiki/MySQL)
+- [MAVEN](https://en.wikipedia.org/wiki/Apache_Maven)
+- [GIT](https://en.wikipedia.org/wiki/Git)/[GITHUB](https://en.wikipedia.org/wiki/GitHub)
+- [Design patterns](https://en.wikipedia.org/wiki/Software_design_pattern):
+    - [Builder](https://en.wikipedia.org/wiki/Builder_pattern)
+    - [Singleton](https://en.wikipedia.org/wiki/Singleton_pattern)
+    - [DAO](https://en.wikipedia.org/wiki/Data_access_object)
+    - [Decorator](https://en.wikipedia.org/wiki/Decorator_pattern)
+- [Collections](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Collections.html)
+- [jUnit](https://en.wikipedia.org/wiki/JUnit)
+- [Log4j](https://en.wikipedia.org/wiki/Log4j)
+- [JDBC](https://en.wikipedia.org/wiki/Java_Database_Connectivity)
+- [Exceptions](https://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html)
+- [Scanner](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/util/Scanner.html)
+- [Multi-Threading](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Thread.html)
 
 ## Features
 
@@ -36,85 +44,247 @@
 
 
 ## Setup
+In order to use this application please clone repository onto your local machine
+1. Use this [link](https://github.com/vladlogyin/database-sparta) (click on icon)<br>
+2. Open your IntelliJ (or any other IDE of your preference )<br>
+3. Create New > Project from version control<br>
+   ![creting new project](/src/main/resources/new%20project.png)<br> 
+4. Paste repo ([link](https://github.com/vladlogyin/database-sparta)) & select where project will be saved. Click clone on bottom.
 
+5. Once project is opened, load Maven build (pop up in right-hand corner)
+   ![maven_build](/src/main/resources/Maven.PNG)
+6. Create new file under path:
+>src/main/resources/
 
-## Usage
+and name file -> **database.properties**
 
+6. Inside please update your database credentials (where XXX is your login & password )
+> db.url = jdbc:mysql://localhost:3306/employee<br>
+> db.username =XXX<br>
+> db.password = XXX<br>
+7. Move to SQL Setup
 
-## Project Status
+## MySQL setup
 
+1. This software requires MySQL & MySQL workbench(or any other tool of your preference )
+2. Create new schema (copy script)
+```sql
+CREATE schema employee;
+```
+3. Create new tables (copy script)
+```sql
+DROP TABLE IF exists employee;
+CREATE table employee (
+emp_number integer primary KEY,
+name_preference varchar(5),
+first_name varchar(20),
+middle_name VARCHAR(1),
+last_name varchar(20),
+gender char,
+email VARCHAR(40),
+date_of_birth date,
+joining_date date,
+salary integer
+);
+```
 
-## Room for Improvement
+## Performance upgrades
 
+Our base case for checking performance was saving each employee in database using:
+>[Prepared Statement](https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/PreparedStatement.html) with [auto-commit](https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/Connection.html#setAutoCommit(boolean)) - **true**
+
+```java
+public static void saveEmployee(Employee employee, PreparedStatement statement) {
+        Connection conn = ConnectionFactory.getConnection();
+        try {
+            synchronized (statement) {
+                statement.setInt(1, employee.getEmpNumber());
+                statement.setString(2, String.valueOf((employee.getNamePreference())));
+                statement.setString(3, employee.getFirstName());
+                statement.setString(4, String.valueOf(employee.getMiddleName()));
+                statement.setString(5, employee.getLastName());
+                statement.setString(6, String.valueOf(employee.getGender()));
+                statement.setString(7, employee.getEmail());
+                statement.setDate(8, employee.getDateOfBirth());
+                statement.setDate(9, employee.getJoiningDate());
+                statement.setInt(10, employee.getSalary());
+                statement.addBatch();
+            }
+        } catch (SQLException e) {
+            Logger.error(e.getMessage());
+        }
+    }
+```
+```java
+public static void saveFromCollection(Collection<Employee> employeeList, Boolean autoCommit) {
+        try {
+            ConnectionFactory.getConnection().setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            Logger.error(e.getMessage());
+        }
+        for (Employee emp : employeeList) {
+            saveEmployee(emp);
+        }
+        try {
+            ConnectionFactory.connection.commit();
+        } catch (SQLException e) {
+            Logger.error(e.getMessage());
+        }
+    }
+```
+
+![stage1 resluts](src/main/resources/stage1.PNG)
+
+Our next step was to set [auto-commit](https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/Connection.html#setAutoCommit(boolean)) to **false**.<br><br>
+![stage1 resluts](src/main/resources/stage2.PNG)
+
+At this stage we discover that committing changes after whole batch is ready is more efficient than committing changes after each individual employee. <br>
+
+Knowing all of that, we tested if multi-threading will increase performance even further
+
+```java
+public static void saveFromCollectionParallel(Collection<Employee> employeeList) {
+        final int threadCount = 2;
+
+        long startNano = System.nanoTime();
+        final Connection conn = ConnectionFactory.getConnection();
+        final PreparedStatement[] threadSpecificStatements = new PreparedStatement[threadCount];
+        try {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < threadCount; i++) {
+                threadSpecificStatements[i] = conn.prepareStatement(INSERT_SQL_STATEMENT);
+            }
+        } catch (SQLException e) {
+            Logger.error("Exception thrown during statement setup:\n" + e.toString());
+        }
+
+        ThreadPool.forEach(employeeList, (employee,threadID) -> {
+            saveEmployee(employee,threadSpecificStatements[threadID]);
+        }, threadCount);
+
+        try {
+            ThreadPool.forEach(Arrays.asList(threadSpecificStatements), (statement, threadID) -> {
+                try {
+                    statement.executeBatch();
+                    statement.close();
+                    conn.commit();
+
+                }
+                catch (SQLException e)
+                {
+                    Logger.error("Exception thrown in thread "+threadID+" during statement execution:\n" + e.toString());
+                }
+            }, threadCount);
+
+        }
+        catch (RuntimeException e)
+        {
+            Logger.error("Exception thrown during statement execution:\n" + e.toString());
+        }
+
+        long nanoDiff = System.nanoTime()-startNano;
+        double milliSeconds = nanoDiff/1E6;
+        System.out.println("Threads: " + threadCount + " time spent:" + milliSeconds+"ms");
+    }
+```
+
+![multiThreadsResults](src/main/resources/MultiThread.PNG)
+
+**At this stage we reduce inserting time from 3.5 minutes down to around 14 sek.**
+
+>*Our next goal was try to go down below 10 sek for whole operation.*
+
+We slightly changed our approach to this. We decided to test if building SQL statement would be more efficient if we use [StringBuilder](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/StringBuilder.html).
+
+```java
+public static void saveFromCollectionParallelSuperFast(Collection<Employee> employeeList)
+    {
+        final int threadCount=2;
+
+        long startNano = System.nanoTime();
+        Connection conn = ConnectionFactory.getConnection();
+        final PreparedStatement[] threadSpecificStatements = new PreparedStatement[threadCount];
+        try {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < threadCount; i++) {
+                threadSpecificStatements[i] = conn.prepareStatement(INSERT_SQL_STATEMENT);
+            }
+        } catch (SQLException e) {
+            Logger.error("Exception thrown during statement setup:\n" + e.toString());
+        }
+        StringBuilder query = new StringBuilder(10_000_000);
+        query.append("INSERT INTO employee (emp_number,name_preference,first_name,middle_name,last_name,gender,email,date_of_birth,joining_date,salary) VALUES ");
+        boolean first=true;
+        for(Employee emp : employeeList)
+        {
+            if(first)
+            {
+                first=false;
+
+            }
+            else
+            {
+                query.append(',');
+            }
+            query.append('(');
+            query.append(emp.getEmpNumber());
+            query.append(",'");
+            query.append(emp.getNamePreference());
+            query.append("','");
+            query.append(emp.getFirstName());
+            query.append("','");
+            query.append(emp.getMiddleName());
+            query.append("','");
+            query.append(emp.getLastName());
+            query.append("','");
+            query.append(emp.getGender());
+            query.append("','");
+            query.append(emp.getEmail());
+            query.append("','");
+            query.append(emp.getDateOfBirth().toString());
+            query.append("','");
+            query.append(emp.getJoiningDate().toString());
+            query.append("',");
+            query.append(emp.getSalary());
+            query.append(")");
+
+        }
+        query.append(";");
+        try {
+            Statement s= conn.createStatement();
+            s.execute(query.toString());
+            conn.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        long nanoDiff = System.nanoTime()-startNano;
+        double milliSeconds = nanoDiff/1E6;
+        System.out.println("Time spent:" + milliSeconds+"ms");
+    }
+```
+<br>
+
+![StringBuilderResults](src/main/resources/sbSigleThread.PNG)
+
+Last test we performed was to check SB approaches with multi-threading
+
+![StringBuilderResults](src/main/resources/sbMultiTrhead.PNG)
+
+**All the test performed were based on:**
+- same PC.
+- identical data sets (CSV file).
+- database tables were truncated before each test.
 
 
 ## Contact
 
+Software created by : 
 
-
-## Phase 1 – Initial Reading and Cleaning
-- Create a new project and write code to read data from an Employee CSV file.
-- As it is read in, add each record read to a new object of a suitable class and then add those objects to a collection.
-- Any corrupt or duplicated data should be added to a separate collection for further analysis.
-- Write tests to ensure data is being managed correctly.
-- Consider which date class would be best to use for the date fields – there is one in ```java.util``` and another in ```java.sql```.
-- Provide a simple user interface to display the results of reading the file – how many unique, clean records there are, how many duplicates, how many records with missing fields, possibly display the questionable records.
-- User the provided ```EmployeeRecords1.csv``` and ```EmployeeRecords2.csv``` for your testing and optionally create your own test files to help with your JUnit tests.
-
-  ### Notes:
-    - Consider preparing your tests beforehand, in line with a TDD approach.
-    - Since the overall purpose of the project is data migration, we want to make sure that only clean data is transferred.
-    - Consider your code structure, since later in the project we will be increasing the size of the data and looking at the efficiency of the code.
-    - The choice of collection will be important as there is some duplication of the employee records.
-
-## Phase 2 – Persist to Database
-- Write the SQL statements to create a table and to persist data to that table.
-- If the table exists, it will need to be dropped first.
-- Install the drivers for the database to be used (MySQL) and create a connection.
-- Create a data access object ([DAO pattern](https://en.wikipedia.org/wiki/Data_access_object)) to persist the data to the database.
-- Persist employee records and write code to retrieve individual records from the database.
-
-  ### Notes:
-    - Remember to use try-with-resources to ensure connections are closed as soon as they have been used, if appropriate.
-    - Care needs to be taken with transferring dates from Java to SQL; make sure ```Strings``` are not used for dates.
-    - It is easy to make this process very slow by creating a new connection for each record – consider how to ensure that you reuse connections.
-
-## Phase 3 – Add Multithreading
-- Use the second file, ```EmployeeRecordsLarge.csv```, which can be assumed to have already been cleaned.
-- Record time taken to persist to MySql before implementing multiple threads.
-- Add multithreading to your application for writing the data to the database, comparing the execution time with the single-threaded version.
-- Try different numbers of threads and compare the results – what is the optimum number of threads? Record this information in your ```README.md```.
-
-  ### Notes:
-    - Run tests to ensure the integrity of the data - make sure data has not been corrupted by adding multithreading to the application (check whether race conditions, for example, have changed the operation of the program).
-
-## Phase 4 - Add Streams and Lambdas
-- Modify code to make use of functional programming concepts – lambdas and streams.
-- Keep the original code and then run tests to see if efficiency has improved by adding functional code.
-
-  ### Notes:
-    - Functional programming is not all about speed, but also thread safety, ease of reading, etc.
-    - Consider whether your code has been improved as a result of the changes and comment on this in your ```README.md```.
-
-## Submission
-
-Project submission is by sending a link to your Git repo via email or Teams message
-to one or all of the trainers.
-If your Git repo is private ask one or all of the trainers to collaborate so we can read the
-code. **The deadline for submission is 23:59 on 2022-07-17.**
-
-## Groups
-
-Please advise who will be leading the Scrum activities for your group.
-
-
-
-### Over Achievers
-
-- Mustafa Nawaz
-- Bart Perczynski
-- Vlad Logyin
-- Omar Tehami
-- Pete Wiatr
+- [Mustafa Nawaz](	https://github.com/Typist01)
+- [Bart Perczynski](https://github.com/Baaartosz)
+- [Vlad Logyin](https://github.com/vladlogyin)
+- [Omar Tehami](https://github.com/OTDZ)
+- [Piotr(Peter) Wiatr](https://github.com/wiater88)
 
 
