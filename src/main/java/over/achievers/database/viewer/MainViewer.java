@@ -5,13 +5,20 @@ import over.achievers.database.SQLServer.EmployeeDAO;
 import over.achievers.database.model.Employee;
 import over.achievers.database.model.Logger;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class MainViewer {
     static Scanner scanner = new Scanner(System.in);
+    public static void startMessage(){
+        System.out.println("Writing to database");
+    }
     public static void dataLoadedMessage(int addedNum, int filteredNum){
         System.out.println(addedNum + " records successfully added to database.");
-        System.out.println(filteredNum + " records were filtered out due to invalid field entries");
+        System.out.println(filteredNum + " records were filtered out due to invalid field entries\n");
+    }
+    public static void printRunTime(double t){
+        System.out.println("Operation took " + t +" milliseconds");
     }
     public static int getEmpId(){
         while (true){
@@ -27,8 +34,8 @@ public class MainViewer {
         System.out.println("Enter the id of the employee record you want to view.");
         try{
             Integer userChoice = Integer.parseInt(scanner.nextLine());
-            if (userChoice < 0){
-                System.out.println("Only natural numbers accepted");
+            if (userChoice < 1){
+                System.out.println("Only natural numbers accepted, one or greater");
                 throw new NotNaturalException("Not a natural number");
             } else
                 return userChoice;
@@ -37,13 +44,51 @@ public class MainViewer {
             throw new NumberFormatException(e.getMessage());
         }
     }
-    public static void displayUser(Employee emp){
-        System.out.println(emp.toString());
+    public static boolean isYes(String input){
+        switch (input){
+            case "yes", "yeah", "ye", "y", "aye":
+                return true;
+            default:
+                return false;
+        }
     }
-    public static int getUserThreadCount(){
-        System.out.println("How many threads would you like to use?");
-        int userChoice = Integer.parseInt(scanner.nextLine());
+    public static boolean getViewChoice(){
+        System.out.println("Would you like to view the invalid records?");
+        String userInput = scanner.nextLine();
+        return isYes(userInput);
+    }
 
-        return userChoice;
+    public static void showData(Collection employees, String msg){
+        System.out.println(msg);
+        showRecords(employees);
+    }
+    static void showRecords(Collection employees){
+        employees.forEach(record -> System.out.println(record.toString()));
+    }
+
+
+    public static void displayEmployee(Employee emp){
+        System.out.println(emp.toString() + "\n");
+    }
+    public static void printMessage(String msg){
+        System.out.println(msg);
+    }
+    public static boolean viewAgain(){
+        System.out.println("Would you like to view another? (y)");
+        String userChoice = scanner.nextLine();
+        return isYes(userChoice);
+    }
+    public static int getThreadChoice(){
+        System.out.println("How many threads would you like to use?");
+        try{
+            int userChoice = Integer.parseInt(scanner.nextLine());
+            if (userChoice < 1)
+                throw new NotNaturalException("thread count must be equal to or greater than 1");
+             else
+                 return userChoice;
+        }  catch(Exception e){
+            Logger.info("Invalid threadcount entered in getThreadChoice method from MainViewer\n" +  e.getMessage());
+        }
+        return 4;
     }
 }
