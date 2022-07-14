@@ -59,10 +59,13 @@ In order to use this application please clone repository onto your local machine
 and name file -> **database.properties**
 
 6. Inside please update your database credentials (where XXX is your login & password )
-> db.url = jdbc:mysql://localhost:3306/employee<br>
-> db.username =XXX<br>
-> db.password = XXX<br>
-7. Move to SQL Setup
+```
+db.url = jdbc:mysql://localhost:3306/employee<br>
+db.username = XXX<br>
+db.password = XXX 
+```
+
+8. Move to SQL Setup
 
 ## MySQL setup
 
@@ -271,10 +274,13 @@ Last test we performed was to check SB approaches with multi-threading
 
 ![StringBuilderResults](src/main/resources/sbMultiTrhead.PNG)
 
+![ThredsPerformanceGraph](src/main/resources/thredsCountGraph.png)
+
 **All the test performed were based on:**
 - same PC.
 - identical data sets (CSV file).
 - database tables were truncated before each test.
+
 
 
 ## Contact
