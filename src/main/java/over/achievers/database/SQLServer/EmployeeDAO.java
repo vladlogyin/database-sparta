@@ -106,8 +106,8 @@ public class EmployeeDAO {
         final Employee[] array = employeeList.toArray(new Employee[0]);
 
         for (int i = 0; i < threads.length; i++) {
-            final int arrayBegin = employeeList.size() / threadCount * i;
-            final int arrayEnd = employeeList.size() / threadCount * (i + 1);
+            final int arrayBegin = employeeList.size() * i / threadCount;
+            final int arrayEnd = employeeList.size()* (i + 1) / threadCount;
             final int threadID = i;
             threads[threadID] = new Thread(() -> {
                 StringBuilder query = new StringBuilder(10_000_000);
