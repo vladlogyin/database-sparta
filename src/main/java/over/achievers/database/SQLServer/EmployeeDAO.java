@@ -294,10 +294,17 @@ public class EmployeeDAO {
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
-            StringBuffer sb = new StringBuffer();
-            for (int i = 1; i < 11; i++) {
-                sb.append(rs.getString(i)).append(" ");
-            }
+            return new Employee()
+                    .setEmpNumber(rs.getInt(1))
+                    .setNamePreference(rs.getString(2))
+                    .setFirstName(rs.getString(3))
+                    .setMiddleName(rs.getString(4).charAt(0))
+                    .setLastName(rs.getString(5))
+                    .setGender(rs.getString(6).charAt(0))
+                    .setEmail(rs.getString(7))
+                    .setDateOfBirth(rs.getDate(8))
+                    .setJoiningDate(rs.getDate(9))
+                    .setSalary(rs.getInt(10));
         } catch (SQLException e) {
             // TODO IMPLEMENT LOGGING
             throw new RuntimeException(e);
