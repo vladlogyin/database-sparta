@@ -6,35 +6,34 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.PropertyResourceBundle;
 
-public class ConnectionFactory implements AutoCloseable {
-    public static Connection connection = null;
-    public static Connection getConnection(){
-        Properties dbProps = new Properties();
+public class ConnectionFactory {
+
+    public Connection getConnection() {
+        Connection connection = null;
+
+        // Load Properties File
+        Properties properties = new Properties();
         try {
-            dbProps.load(new FileReader("src/main/resources/database.properties"));
+            properties.load(new FileReader("src/main/resources/database.properties"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // TODO IMPLEMENT LOGGING
         }
 
-        if (connection == null){
-            try{
-                connection = DriverManager.getConnection(dbProps.getProperty("db.url"), dbProps.getProperty("db.username"), dbProps.getProperty("db.password"));
-            } catch(SQLException e){
-                e.printStackTrace();
-            }
+        // Connect to Database
+        try {
+            connection = DriverManager.getConnection(
+                    properties.getProperty("db.url"),
+                    properties.getProperty("db.username"),
+                    properties.getProperty("db.password")
+            );
+        } catch (SQLException e) {
+            // TODO IMPLEMENT LOGGING
         }
+
+        // Discard sensitive information after use.
+        properties.clear();
+
         return connection;
-    }
-
-    public void close(){
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }
