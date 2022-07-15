@@ -274,7 +274,7 @@ public static void saveFromCollectionParallel(Collection<Employee> employeeList)
 
 **At this stage we reduce inserting time from 3.5 minutes down to around 14 sek.**
 
->*Our next goal was try to go down below 10 sek for whole operation.*
+>*Our next goal was try to go down below 10 sec for whole operation.*
 
 We slightly changed our approach to this. We decided to test if building SQL statement would be more efficient if we use [StringBuilder](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/StringBuilder.html).
 
