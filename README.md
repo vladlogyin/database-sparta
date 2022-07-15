@@ -5,6 +5,7 @@
 * [Technologies Used](#technologies-used)
 * [Features](#features)
 * [Screenshots](#screenshots)
+* [Test](#Tests)
 * [Setup](#setup)
 * [MySQL](#mysql-setup)
 * [Performance upgrades](#Performance upgrades)
@@ -41,6 +42,8 @@
 
 
 ## Screenshots
+
+## Tests
 
 
 ## Setup
