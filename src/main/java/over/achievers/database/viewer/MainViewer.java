@@ -1,7 +1,5 @@
 package over.achievers.database.viewer;
 
-import org.apache.logging.log4j.core.util.JsonUtils;
-import over.achievers.database.SQLServer.EmployeeDAO;
 import over.achievers.database.model.Employee;
 import over.achievers.database.model.Logger;
 
@@ -45,7 +43,7 @@ public class MainViewer {
         }
     }
     public static boolean isYes(String input){
-        switch (input){
+        switch (input.toLowerCase().trim()){
             case "yes", "yeah", "ye", "y", "aye":
                 return true;
             default:
@@ -58,14 +56,13 @@ public class MainViewer {
         return isYes(userInput);
     }
 
-    public static void showData(Collection employees, String msg){
+    public static void showData(Collection<?> employees, String msg){
         System.out.println(msg);
         showRecords(employees);
     }
-    static void showRecords(Collection employees){
+    static void showRecords(Collection<?> employees){
         employees.forEach(record -> System.out.println(record.toString()));
     }
-
 
     public static void displayEmployee(Employee emp){
         System.out.println(emp.toString() + "\n");
@@ -91,4 +88,33 @@ public class MainViewer {
         }
         return 4;
     }
+    public static boolean userHasConfig(){
+        System.out.println("Would you like to enter new credentials?");
+        String userChoice = scanner.nextLine();
+        return isYes(userChoice);
+    }
+
+    public static String[] getUserCredentials(){
+        String[] credentials = new String[3];
+        credentials[0] = getUrl();
+        credentials[1] = getUsername();
+        credentials[2] = getPassword();
+        return credentials;
+    }
+    static String getUrl(){
+        System.out.println("Enter the url of the database");
+        String userChoice = scanner.nextLine();
+        return userChoice;
+    }
+    public static String getUsername(){
+        System.out.println("Enter the url of the database");
+        String userChoice = scanner.nextLine();
+        return userChoice;
+    }
+    public static String getPassword(){
+        System.out.println("Enter the url of the database");
+        String userChoice = scanner.nextLine();
+        return userChoice;
+    }
+
 }

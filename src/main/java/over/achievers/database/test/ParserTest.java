@@ -9,10 +9,6 @@ import over.achievers.database.parsing.DateParser;
 import over.achievers.database.parsing.InvalidFormatException;
 import over.achievers.database.parsing.Parser;
 
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class ParserTest {
 
     Parser employeeParser;

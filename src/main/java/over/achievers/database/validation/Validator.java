@@ -1,6 +1,5 @@
 package over.achievers.database.validation;
 
-import over.achievers.database.DatabaseEntry;
 import over.achievers.database.model.Employee;
 
 import java.util.Collection;

@@ -1,39 +1,68 @@
 package over.achievers.database.SQLServer;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class ConnectionFactory {
 
-    public Connection getConnection() {
-        Connection connection = null;
+    private static Properties config;
 
-        // Load Properties File
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileReader("src/main/resources/database.properties"));
-        } catch (IOException e) {
-            // TODO IMPLEMENT LOGGING
+    public static void loadConfig(String path) throws FileNotFoundException, SecurityException{
+        if(config==null)
+        {
+            config = new Properties();
         }
 
-        // Connect to Database
-        try {
-            connection = DriverManager.getConnection(
-                    properties.getProperty("db.url"),
-                    properties.getProperty("db.username"),
-                    properties.getProperty("db.password")
-            );
-        } catch (SQLException e) {
-            // TODO IMPLEMENT LOGGING
+        File configFile = new File(path);
+        synchronized (config) {
+            if (!configFile.exists()) {
+                throw new FileNotFoundException("Database config file '" + path + "' not found!");
+            }
+            try {
+                config.load(new FileReader(path));
+            } catch (IOException ex) {
+                // genuinely not sure what this does here
+                throw new RuntimeException(ex);
+            }
         }
 
-        // Discard sensitive information after use.
-        properties.clear();
+    }
+    public static void setConfig(String url, String uname, String passwd) throws NullPointerException
+    {
+        if(url==null || uname == null || passwd == null)
+        {
+            throw new NullPointerException("One or more parameters are null");
+        }
+        if(config==null)
+        {
+            config = new Properties();
+        }
+        synchronized (config) {
+            config.setProperty("db.url", url);
+            config.setProperty("db.username", uname);
+            config.setProperty("db.password", passwd);
+        }
+    }
 
-        return connection;
+
+    public Connection getConnection() throws SQLException{
+        if(config==null)
+        {
+            throw new SQLException("No valid database config!");
+        }
+        synchronized (config) {
+            return DriverManager.getConnection(
+                    config.getProperty("db.url"),
+                    config.getProperty("db.username"),
+                    config.getProperty("db.password"));
+        }
     }
 }

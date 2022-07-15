@@ -1,13 +1,16 @@
 package over.achievers.database.Controller;
 
+import over.achievers.database.SQLServer.ConnectionFactory;
 import over.achievers.database.SQLServer.EmployeeDAO;
 import over.achievers.database.model.Employee;
+import over.achievers.database.model.Logger;
 import over.achievers.database.parsing.EmployeeImporter;
 import over.achievers.database.parsing.Parser;
 import over.achievers.database.validation.*;
 import over.achievers.database.viewer.MainViewer;
 
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.Collection;
 
 public class ControllerMain {
@@ -18,10 +21,6 @@ public class ControllerMain {
     }
 
     public static void start() {
-        Parser par2 = new Parser();
-        Employee employee = par2.parse("178566,Mrs.,Juliette,M,Rojo,F,juliette.rojo@yahoo.co.uk,5/8/1967,6/4/2011,193912");
-        EmployeeDAO dao = new EmployeeDAO();
-
         Validator[] validators = new Validator[]{
                 new IDValidator(),
                 new DateValidator(),
@@ -32,7 +31,7 @@ public class ControllerMain {
         };
         employees = null;
         try {
-            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
+            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecords1.csv", validators);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -45,8 +44,29 @@ public class ControllerMain {
         Collection list = employees.getValidEmployees();
         MainViewer.startMessage();
         long startTime = System.nanoTime();
-        EmployeeDAO.truncateTable();
-        EmployeeDAO.saveFromCollectionMultithreadedSuperFast(list, threads);
+        boolean gotAccess = false;
+        while(!gotAccess)
+        try {
+            new ConnectionFactory().getConnection();
+            gotAccess = true;
+        } catch (SQLException e) {
+            try{
+            ConnectionFactory.loadConfig("src/main/resources/database.properties");
+            } catch (FileNotFoundException ewwww) {
+                Logger.warn(ewwww.getMessage());
+                if (MainViewer.userHasConfig()) {
+                    String[] userCredentials = MainViewer.getUserCredentials();
+                    ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
+                } else
+                    System.exit(0);
+            }
+        }
+        try{
+            EmployeeDAO.truncateTable();
+            EmployeeDAO.saveFromCollectionMultithreadedSuperFast(list, threads);
+        } catch(SQLException e){
+            Logger.info("Problem when writing to table: " + e.getMessage());
+        }
         long endTime = System.nanoTime();
         MainViewer.printRunTime((endTime - startTime) / 1_000_000);
         int totalInvalid = employees.getInvalidEmployees().size() + employees.getInvalidLines().size();
@@ -61,11 +81,15 @@ public class ControllerMain {
         boolean stop = false;
         while (!stop) {
             int empId = MainViewer.getEmpId();
-            Employee emp = EmployeeDAO.getEmployeeByID(empId);
-            if (emp == null) {
-                MainViewer.printMessage("Employee not found.");
+            try {
+                Employee emp = EmployeeDAO.getEmployeeByID(empId);
+                MainViewer.displayEmployee(emp);
             }
-            MainViewer.displayEmployee(EmployeeDAO.getEmployeeByID(empId));
+            catch (SQLException e) {
+
+                MainViewer.printMessage("Could not get employee");
+                Logger.warn("Could not get employee: " + e.getMessage());
+            }
             if (!MainViewer.viewAgain()) {
                 stop = true;
             }
