@@ -30,7 +30,7 @@ public class MainViewer {
         }
     }
     static int getId() throws NotNaturalException {
-        System.out.println("Enter the id of the employee record you want to view.");
+        System.out.println("\nEnter the id of the employee record you want to view.");
         try{
             Integer userChoice = Integer.parseInt(scanner.nextLine());
             if (userChoice < 1){
@@ -52,7 +52,7 @@ public class MainViewer {
         }
     }
     public static boolean getViewChoice(){
-        System.out.println("Would you like to view the invalid records?");
+        System.out.println("Would you like to view the invalid records? (y)");
         String userInput = scanner.nextLine();
         return isYes(userInput);
     }
@@ -108,7 +108,7 @@ public class MainViewer {
         return 4;
     }
     public static boolean userHasConfig(){
-        System.out.println("Would you like to enter new credentials?");
+        System.out.println("Would you like to enter new credentials? (y)");
         String userChoice = scanner.nextLine();
         return isYes(userChoice);
     }
@@ -137,7 +137,7 @@ public class MainViewer {
     }
     public static boolean reloadProperties(){
         System.out.println("Problem with loading resources/database");
-        System.out.println("Would you like to try loading resources/database.properties again?");
+        System.out.println("Would you like to try loading resources/database.properties again? (y)");
         return isYes(scanner.nextLine());
     }
 

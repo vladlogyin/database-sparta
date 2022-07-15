@@ -31,7 +31,7 @@ public class ControllerMain {
         };
         employees = null;
         try {
-            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecords1.csv", validators);
+            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
         } catch (FileNotFoundException e) {
             MainViewer.printMessage("Could not get employee records");
             Logger.info("Problem getting employee records");

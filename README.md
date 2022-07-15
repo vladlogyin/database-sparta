@@ -47,13 +47,24 @@
 
 # Usage
  - Run Main to start the application, you should see the following message printed in the terminal:
-![img_1.png](src/main/resources/images/img_1.png)
- - 
- - Enter the number of threads. If your configuration is not in the resources folder, you can enter them manually:
-![img.png](img.png)
- - 
- - 
 
+ ![img_1.png](src/main/resources/images/img_program_start.png)
+
+ - Enter the number of threads and wait for the migration process to complete
+
+ ![img_2.png](img_2.png)
+
+ - You can view the records by responding with yes
+
+ ![img_3.png](img_3.png)
+ - You should see the records below this line, hit enter to cycle through more data.
+
+ ![img_5.png](img_5.png)
+- To view an employee, enter an employee id.
+
+- If your configuration is not in the resources folder, you can enter them manually:
+
+![img.png](img_data_migration_complete.png)
 
 ## Screenshots
 ![resultsonFileOne](src/main/resources/images/showInvalid.PNG)
