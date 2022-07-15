@@ -8,7 +8,7 @@
 * [Test](#Tests)
 * [Setup](#setup)
 * [MySQL](#mysql-setup)
-* [Performance upgrades](#Performance upgrades)
+* [Performance upgrades](#Performance-upgrades)
 * [Contact](#contact)
 
 
@@ -39,12 +39,86 @@
 - [Multi-Threading](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Thread.html)
 
 ## Features
-
+1. Validation each records individually for potential errors.
+2. Multi-threading support with option to chose number of threads to run.
+3. Retrieving individual record from database by ID
 
 ## Screenshots
+![resultsonFileOne](src/main/resources/showInvalid.PNG)
 
 ## Tests
 
+**We tested individually each  validator to make sure they are fully operational**
+
+```java
+@Test
+    @DisplayName("Join date after DoB")
+    void testJoiningDateAfterDoB(){
+        // DoB: 12/12/1974  Joining Date: 6/4/2011
+        Employee employee = employeeParser.parse("1,Mr.,Tim,A,Duncan,M,timduncan@hotmail.com,12/12/1974,6/4/2011,26012");
+        Assertions.assertEquals(true, dateValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Join date before DoB")
+    void testJoiningDateBeforeDoB(){
+        // DoB: 5/11/2019   Joining Date: 3/8/2005
+        Employee employee = employeeParser.parse("2,Mr.,Jason,L,Kidd,M,jkidd6@gmail.com,5/11/2019,3/8/2005,489101");
+        Assertions.assertEquals(false, dateValidator.isValid(employee));
+    }
+```
+```java
+ @Test
+    @DisplayName("DoB before future")
+    void testDoBBeforeFuture(){
+        // DoB: 7/11/1999
+        Employee employee = employeeParser.parse("1,Mr.,Nate,P,Archibald,M,narch123@hotmail.com,7/11/1999,1/1/2008,190123");
+        Assertions.assertEquals(true, dobValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("DoB in future")
+    void testDoBInFuture(){
+        // DoB: 10/12/2028
+        Employee employee = employeeParser.parse("2,Mr.,Andrei,T,Kirilenko,M,andreiii99@gmail.com,10/12/2028,2/4/1995,401930");
+        Assertions.assertEquals(false, dobValidator.isValid(employee));
+    }
+```
+```java
+@Test
+    @DisplayName("Standard email")
+    void testStandardEmail(){
+        // Email: random123@hotmail.com
+        Employee employee = employeeParser.parse("1,Mrs.,Jane,P,Giddey,F,random123@hotmail.com,2/15/2001,11/3/2021,350921");
+        Assertions.assertEquals(true, emailValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Numerical email")
+    void testNumericalEmail(){
+        // Email: 12345
+        Employee employee = employeeParser.parse("2,Mr.,John,A,Wall,M,12345,2/11/1998,2/16/2015,103912");
+        Assertions.assertEquals(false, emailValidator.isValid(employee));
+    }
+
+```
+```java
+@Test
+    @DisplayName("Male")
+    void testMaleGender(){
+        // Gender: M
+        Employee employee = employeeParser.parse("1,Mr.,Mike,B,Victor,M,mikevic@gmail.com,7/12/1954,1/11/1978,346138");
+        Assertions.assertEquals(true, genderValidator.isValid(employee));
+    }
+
+    @Test
+    @DisplayName("Female")
+    void testFemaleGender(){
+        // Gender: F
+        Employee employee = employeeParser.parse("2,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
+        Assertions.assertEquals(true, genderValidator.isValid(employee));
+    }
+```
 
 ## Setup
 In order to use this application please clone repository onto your local machine
@@ -63,8 +137,8 @@ and name file -> **database.properties**
 
 6. Inside please update your database credentials (where XXX is your login & password )
 ```
-db.url = jdbc:mysql://localhost:3306/employee<br>
-db.username = XXX<br>
+db.url = jdbc:mysql://localhost:3306/employee
+db.username = XXX
 db.password = XXX 
 ```
 
@@ -73,7 +147,9 @@ db.password = XXX
 ## MySQL setup
 
 1. This software requires MySQL & MySQL workbench(or any other tool of your preference )
-2. Create new schema (copy script)
+2. Please make sure your MySql Server is running. (Task manager > Service ). If is not, right click on it > start
+![SqlServerRun](/src/main/resources/SqlRunning.PNG)
+3. Create new schema (copy script)
 ```sql
 CREATE schema employee;
 ```
