@@ -43,6 +43,7 @@
 1. Validation each records individually for potential errors.
 2. Multi-threading support with option to chose number of threads to run.
 3. Retrieving individual record from database by ID
+4. database.properties will be created on first application run
 
 ## Screenshots
 ![resultsonFileOne](src/main/resources/showInvalid.PNG)
@@ -131,19 +132,8 @@ In order to use this application please clone repository onto your local machine
 
 5. Once project is opened, load Maven build (pop up in right-hand corner)
    ![maven_build](/src/main/resources/Maven.PNG)
-6. Create new file under path:
->src/main/resources/
 
-and name file -> **database.properties**
-
-6. Inside please update your database credentials (where XXX is your login & password )
-```
-db.url = jdbc:mysql://localhost:3306/employee
-db.username = XXX
-db.password = XXX 
-```
-
-8. Move to SQL Setup
+6. Move to SQL Setup
 
 ## MySQL setup
 
@@ -362,7 +352,9 @@ Last test we performed was to check SB approaches with multi-threading
 - database tables were truncated before each test.
 
 ## Future Development
-1. Im
+
+1. Improve performance even further
+2. Implement functionality for user to insert own CSV file
 
 ## Contact
 

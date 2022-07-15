@@ -4,6 +4,7 @@ import over.achievers.database.model.Employee;
 import over.achievers.database.model.Logger;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class MainViewer {
@@ -58,10 +59,20 @@ public class MainViewer {
 
     public static void showData(Collection<?> employees, String msg){
         System.out.println(msg);
-        showRecords(employees);
-    }
-    static void showRecords(Collection<?> employees){
-        employees.forEach(record -> System.out.println(record.toString()));
+        Iterator rs = employees.iterator();
+        while(rs.hasNext()) {
+            for (int i = 0; i < 15 && rs.hasNext(); i++){
+                Employee emp =  (Employee) rs.next();
+                System.out.println(emp.toString());
+            }
+            System.out.println("Would you like to print more?");
+            char userChoice = scanner.next().charAt(0);
+            if(userChoice == 'q'){
+                break;
+            } else{
+                continue;
+            }
+        }
     }
 
     public static void displayEmployee(Employee emp){
@@ -79,13 +90,16 @@ public class MainViewer {
         System.out.println("How many threads would you like to use?");
         try{
             int userChoice = Integer.parseInt(scanner.nextLine());
-            if (userChoice < 1)
+            if (userChoice < 1){
+                System.out.println("Thread count must be greater than or equal to 1");
                 throw new NotNaturalException("thread count must be equal to or greater than 1");
+            }
              else
                  return userChoice;
         }  catch(Exception e){
             Logger.info("Invalid threadcount entered in getThreadChoice method from MainViewer\n" +  e.getMessage());
         }
+        System.out.println("defaulting to four.");
         return 4;
     }
     public static boolean userHasConfig(){
@@ -102,19 +116,23 @@ public class MainViewer {
         return credentials;
     }
     static String getUrl(){
-        System.out.println("Enter the url of the database");
+        System.out.println("Enter the url of the database - default - jdbc:mysql://localhost:3306/employee");
         String userChoice = scanner.nextLine();
         return userChoice;
     }
     public static String getUsername(){
-        System.out.println("Enter the url of the database");
+        System.out.println("Enter the username of the database");
         String userChoice = scanner.nextLine();
         return userChoice;
     }
     public static String getPassword(){
-        System.out.println("Enter the url of the database");
+        System.out.println("Enter the password of the database");
         String userChoice = scanner.nextLine();
         return userChoice;
+    }
+    public static String getFileChoice(){
+        System.out.println("What file would you like to use? 1.  ");
+        return scanner.nextLine();
     }
 
 }

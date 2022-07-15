@@ -54,6 +54,7 @@ public class ControllerMain {
             ConnectionFactory.loadConfig("src/main/resources/database.properties");
             } catch (FileNotFoundException ewwww) {
                 Logger.warn(ewwww.getMessage());
+                MainViewer.printMessage("Credentials not found");
                 if (MainViewer.userHasConfig()) {
                     String[] userCredentials = MainViewer.getUserCredentials();
                     ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
