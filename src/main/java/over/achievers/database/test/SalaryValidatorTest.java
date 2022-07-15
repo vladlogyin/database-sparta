@@ -24,6 +24,7 @@ class SalaryValidatorTest {
     @Test
     @DisplayName("Positive integer salary")
     void testPositiveIntegerSalary(){
+        // Salary: 100123
         Employee employee = employeeParser.parse("1,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,100123");
         Assertions.assertEquals(true, salaryValidator.isValid(employee));
     }
@@ -31,6 +32,7 @@ class SalaryValidatorTest {
     @Test
     @DisplayName("Negative integer salary")
     void testNegativeIntegerSalary(){
+        // Salary: -100123
         Employee employee = employeeParser.parse("1,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,-100123");
         Assertions.assertEquals(false, salaryValidator.isValid(employee));
     }
@@ -38,6 +40,7 @@ class SalaryValidatorTest {
     @Test
     @DisplayName("0 salary")
     void testZeroSalary(){
+        // Salary: 0
         Employee employee = employeeParser.parse("1,Mrs.,Ronda,W,Jackson,F,rjackson77@hotmail.com,10/10/1982,4/1/2009,0");
         Assertions.assertEquals(false, salaryValidator.isValid(employee));
     }
