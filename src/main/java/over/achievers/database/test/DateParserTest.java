@@ -27,4 +27,11 @@ class DateParserTest {
         Assertions.assertEquals("Invalid format exception: Issue with date format: Invalid value for DayOfMonth (valid values 1 - 28/31): 55", e.getMessage());
     }
 
+    @Test
+    @DisplayName("Parse invalid month")
+    void testParseInvalidMonth(){
+        Exception e = Assertions.assertThrows(InvalidFormatException.class, () -> DateParser.parse("15/1/2021"));
+        Assertions.assertEquals("Invalid format exception: Issue with date format: Invalid value for MonthOfYear (valid values 1 - 12): 15", e.getMessage());
+    }
+
 }
