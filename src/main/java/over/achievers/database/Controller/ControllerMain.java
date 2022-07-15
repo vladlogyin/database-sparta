@@ -33,39 +33,52 @@ public class ControllerMain {
         try {
             employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecords1.csv", validators);
         } catch (FileNotFoundException e) {
+            MainViewer.printMessage("Could not get employee records");
+            Logger.info("Problem getting employee records");
             throw new RuntimeException(e);
         }
         int threadCount = MainViewer.getThreadChoice();
         writeToDatabase(threadCount);
+
         getUsers();
     }
 
     static void writeToDatabase(int threads) {
         Collection list = employees.getValidEmployees();
         MainViewer.startMessage();
-        long startTime = System.nanoTime();
         boolean gotAccess = false;
-        while(!gotAccess)
-        try {
-            new ConnectionFactory().getConnection();
-            gotAccess = true;
-        } catch (SQLException e) {
-            try{
-            ConnectionFactory.loadConfig("src/main/resources/database.properties");
-            } catch (FileNotFoundException ewwww) {
-                Logger.warn(ewwww.getMessage());
-                MainViewer.printMessage("Credentials not found");
-                if (MainViewer.userHasConfig()) {
-                    String[] userCredentials = MainViewer.getUserCredentials();
-                    ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
-                } else
-                    System.exit(0);
+        int tries = 0;
+        while (!gotAccess) {
+            try {
+                new ConnectionFactory().getConnection();
+                MainViewer.printMessage("connection successful\n");
+                gotAccess = true;
+            } catch (SQLException e) {
+                try {
+                    if (tries == 0)
+                        ConnectionFactory.loadConfig("src/main/resources/database.properties");
+                    else if (tries>0 && MainViewer.reloadProperties()){
+                        ConnectionFactory.loadConfig("src/main/resources/database.properties");
+                    } else{
+                        System.exit(0);
+                    }
+                    tries++;
+                } catch (FileNotFoundException ewwww) {
+                    Logger.warn(ewwww.getMessage());
+                    MainViewer.printMessage("Credentials not found");
+                    if (MainViewer.userHasConfig()) {
+                        String[] userCredentials = MainViewer.getUserCredentials();
+                        ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
+                    } else
+                        System.exit(0);
+                }
             }
         }
-        try{
+        long startTime = System.nanoTime();
+        try {
             EmployeeDAO.truncateTable();
             EmployeeDAO.saveFromCollectionMultithreadedSuperFast(list, threads);
-        } catch(SQLException e){
+        } catch (SQLException e) {
             Logger.info("Problem when writing to table: " + e.getMessage());
         }
         long endTime = System.nanoTime();
@@ -73,8 +86,8 @@ public class ControllerMain {
         int totalInvalid = employees.getInvalidEmployees().size() + employees.getInvalidLines().size();
         MainViewer.dataLoadedMessage(employees.getValidEmployees().size(), totalInvalid);
         if (totalInvalid > 0 && MainViewer.getViewChoice()) {
-            MainViewer.showData(employees.getInvalidEmployees(), "Records with invalid data entries: ");
-            MainViewer.showData(employees.getInvalidLines(), "Records with invalid data formatting: ");
+            MainViewer.showData(employees.getInvalidEmployees(), "\n---------- Records with invalid data entries: ---------- \n");
+            MainViewer.showData(employees.getInvalidLines(), "\n---------- Records with invalid data formatting: ---------- \n");
         }
     }
 

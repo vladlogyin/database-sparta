@@ -45,8 +45,18 @@
 3. Retrieving individual record from database by ID
 4. database.properties will be created on first application run
 
+# Usage
+ - Run Main to start the application, you should see the following message printed in the terminal:
+![img_1.png](src/main/resources/images/img_1.png)
+ - 
+ - Enter the number of threads. If your configuration is not in the resources folder, you can enter them manually:
+![img.png](img.png)
+ - 
+ - 
+
+
 ## Screenshots
-![resultsonFileOne](src/main/resources/showInvalid.PNG)
+![resultsonFileOne](src/main/resources/images/showInvalid.PNG)
 
 ## Tests
 
@@ -131,7 +141,7 @@ In order to use this application please clone repository onto your local machine
 4. Paste repo ([link](https://github.com/vladlogyin/database-sparta)) & select where project will be saved. Click clone on bottom.
 
 5. Once project is opened, load Maven build (pop up in right-hand corner)
-   ![maven_build](/src/main/resources/Maven.PNG)
+   ![maven_build](/images/Maven.PNG)
 
 6. Move to SQL Setup
 
@@ -139,7 +149,7 @@ In order to use this application please clone repository onto your local machine
 
 1. This software requires MySQL & MySQL workbench(or any other tool of your preference )
 2. Please make sure your MySql Server is running. (Task manager > Service ). If is not, right click on it > start
-![SqlServerRun](/src/main/resources/SqlRunning.PNG)
+![SqlServerRun](/images/SqlRunning.PNG)
 3. Create new schema (copy script)
 ```sql
 CREATE schema employee;
@@ -206,10 +216,10 @@ public static void saveFromCollection(Collection<Employee> employeeList, Boolean
     }
 ```
 
-![stage1 resluts](src/main/resources/stage1.PNG)
+![stage1 resluts](src/main/resources/images/stage1.PNG)
 
 Our next step was to set [auto-commit](https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/Connection.html#setAutoCommit(boolean)) to **false**.<br><br>
-![stage1 resluts](src/main/resources/stage2.PNG)
+![stage1 resluts](src/main/resources/images/stage2.PNG)
 
 At this stage we discover that committing changes after whole batch is ready is more efficient than committing changes after each individual employee. <br>
 
@@ -261,7 +271,7 @@ public static void saveFromCollectionParallel(Collection<Employee> employeeList)
     }
 ```
 
-![multiThreadsResults](src/main/resources/MultiThread.PNG)
+![multiThreadsResults](src/main/resources/images/MultiThread.PNG)
 
 **At this stage we reduce inserting time from 3.5 minutes down to around 14 sek.**
 
@@ -338,13 +348,13 @@ public static void saveFromCollectionParallelSuperFast(Collection<Employee> empl
 ```
 <br>
 
-![StringBuilderResults](src/main/resources/sbSigleThread.PNG)
+![StringBuilderResults](src/main/resources/images/sbSigleThread.PNG)
 
 Last test we performed was to check SB approaches with multi-threading
 
-![StringBuilderResults](src/main/resources/sbMultiTrhead.PNG)
+![StringBuilderResults](src/main/resources/images/sbMultiTrhead.PNG)
 
-![ThredsPerformanceGraph](src/main/resources/thredsCountGraph.png)
+![ThredsPerformanceGraph](src/main/resources/images/thredsCountGraph.png)
 
 **All the test performed were based on:**
 - same PC.

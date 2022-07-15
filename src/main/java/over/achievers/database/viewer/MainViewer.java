@@ -59,15 +59,20 @@ public class MainViewer {
 
     public static void showData(Collection<?> employees, String msg){
         System.out.println(msg);
+        if (employees.size() == 0){
+            System.out.println("None\n");
+            return;
+        }
         Iterator rs = employees.iterator();
         while(rs.hasNext()) {
             for (int i = 0; i < 15 && rs.hasNext(); i++){
                 Employee emp =  (Employee) rs.next();
                 System.out.println(emp.toString());
             }
-            System.out.println("Would you like to print more?");
-            char userChoice = scanner.next().charAt(0);
-            if(userChoice == 'q'){
+            if (rs.hasNext())
+                System.out.println("Enter to view more, q to quit");
+            String userChoice = scanner.nextLine().trim();
+            if(userChoice.equals("q")){
                 break;
             } else{
                 continue;
@@ -130,9 +135,11 @@ public class MainViewer {
         String userChoice = scanner.nextLine();
         return userChoice;
     }
-    public static String getFileChoice(){
-        System.out.println("What file would you like to use? 1.  ");
-        return scanner.nextLine();
+    public static boolean reloadProperties(){
+        System.out.println("Problem with loading resources/database");
+        System.out.println("Would you like to try loading resources/database.properties again?");
+        return isYes(scanner.nextLine());
     }
+
 
 }
