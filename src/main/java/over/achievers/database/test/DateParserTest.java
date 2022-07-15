@@ -34,4 +34,11 @@ class DateParserTest {
         Assertions.assertEquals("Invalid format exception: Issue with date format: Invalid value for MonthOfYear (valid values 1 - 12): 15", e.getMessage());
     }
 
+    @Test
+    @DisplayName("Parse invalid year")
+    void testParseInvalidYear(){
+        Exception e = Assertions.assertThrows(InvalidFormatException.class, () -> DateParser.parse("1/1/2021.5"));
+        Assertions.assertEquals("Invalid format exception: Issue with date format: For input string: \"2021.5\"", e.getMessage());
+    }
+
 }
