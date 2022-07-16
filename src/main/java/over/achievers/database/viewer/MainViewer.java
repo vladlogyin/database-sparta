@@ -140,6 +140,22 @@ public class MainViewer {
         System.out.println("Would you like to reload the credentials from database.properties?");
         return isYes(scanner.nextLine());
     }
+    public static String chooseFile(){
+        System.out.println("Which file would you like to use?\n1. EmployeeRecordsLarge.csv\n2. EmployeeRecords1.csv\n3. EmployeeRecords2.csv");
+        String userInput = scanner.nextLine().toLowerCase().trim();
+        switch(userInput){
+            case "1", "large", "EmployeeRecordsLarge", "EmployeeRecordsLarge.csv":
+                return "EmployeeRecordsLarge.csv";
+            case "2", "EmployeeRecords1", "EmployeeRecords1.csv":
+                return "EmployeeRecords1.csv";
+            case "3", "EmployeeRecords2", "EmployeeRecords2.csv":
+                return "EmployeeRecords2.csv";
+            default:
+                System.out.println("Defaulting to EmployeeRecordsLarge");
+                return "EmployeeRecordsLarge.csv";
+        }
+
+    }
 
     public static boolean viewRecords(){
         System.out.println("Would you like to view employee records? (y)");

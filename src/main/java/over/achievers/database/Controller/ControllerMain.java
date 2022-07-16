@@ -30,8 +30,9 @@ public class ControllerMain {
                 new EmailValidator()
         };
         employees = null;
+
         try {
-            employees = EmployeeImporter.fromCSV("src/main/resources/EmployeeRecordsLarge.csv", validators);
+            employees = EmployeeImporter.fromCSV("src/main/resources/" + MainViewer.chooseFile(), validators);
         } catch (FileNotFoundException e) {
             MainViewer.printMessage("Could not get employee records");
             Logger.info("Problem getting employee records");
