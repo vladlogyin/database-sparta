@@ -136,8 +136,13 @@ public class MainViewer {
         return userChoice;
     }
     public static boolean reloadProperties(){
-        System.out.println("Problem with loading resources/database");
-        System.out.println("Would you like to try loading resources/database.properties again? (y)");
+        System.out.println("Problem with loading database credentials\n");
+        System.out.println("Would you like to reload the credentials from database.properties?");
+        return isYes(scanner.nextLine());
+    }
+
+    public static boolean viewRecords(){
+        System.out.println("Would you like to view employee records? (y)");
         return isYes(scanner.nextLine());
     }
 

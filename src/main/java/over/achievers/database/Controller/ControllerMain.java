@@ -59,6 +59,9 @@ public class ControllerMain {
                         ConnectionFactory.loadConfig("src/main/resources/database.properties");
                     else if (tries>0 && MainViewer.reloadProperties()){
                         ConnectionFactory.loadConfig("src/main/resources/database.properties");
+                    } else if (MainViewer.userHasConfig()){
+                        String[] userCredentials = MainViewer.getUserCredentials();
+                        ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
                     } else{
                         System.exit(0);
                     }
@@ -93,6 +96,9 @@ public class ControllerMain {
 
     static void getUsers() {
         boolean stop = false;
+        if (!MainViewer.viewRecords()){
+            stop = true;
+        }
         while (!stop) {
             int empId = MainViewer.getEmpId();
             try {
