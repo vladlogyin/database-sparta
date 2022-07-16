@@ -46,11 +46,11 @@
 4. database.properties will be created on first application run
 
 # Usage
- - Run Main to start the application, you should see the following message printed in the terminal:
+ - Run Main to start the application, you should see the following interface:
 
- ![img_1.png](images/img_program_start.png)
-
- - Enter the number of threads and wait for the migration process to complete
+![img.png](images/Interface.png)
+You can select the file you want to migrate or hit enter for default.
+ - Enter the number of threads you want to use and wait for the migration process to complete
 
  ![img_2.png](images/writing_to_database_img.png)
 
