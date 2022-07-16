@@ -123,6 +123,10 @@ public class MainViewer {
     static String getUrl(){
         System.out.println("Enter the url of the database - default - jdbc:mysql://localhost:3306/employee");
         String userChoice = scanner.nextLine();
+        if (userChoice == ""){
+            System.out.println("Using default url");
+            return "jdbc:mysql://localhost:3306/employee";
+        }
         return userChoice;
     }
     public static String getUsername(){
@@ -137,7 +141,7 @@ public class MainViewer {
     }
     public static boolean reloadProperties(){
         System.out.println("Problem with loading database credentials\n");
-        System.out.println("Would you like to reload the credentials from database.properties?");
+        System.out.println("Would you like to reload the credentials from the database.properties file?");
         return isYes(scanner.nextLine());
     }
     public static String chooseFile(){
@@ -151,7 +155,7 @@ public class MainViewer {
             case "3", "EmployeeRecords2", "EmployeeRecords2.csv":
                 return "EmployeeRecords2.csv";
             default:
-                System.out.println("Defaulting to EmployeeRecordsLarge");
+                System.out.println("Invalid entry, defaulting to EmployeeRecordsLarge");
                 return "EmployeeRecordsLarge.csv";
         }
 
