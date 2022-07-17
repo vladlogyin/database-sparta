@@ -140,8 +140,8 @@ public class MainViewer {
         return userChoice;
     }
     public static boolean reloadProperties(){
-        System.out.println("Problem with loading database credentials\n");
-        System.out.println("Would you like to reload the credentials from the database.properties file?");
+        System.out.println("Could not form a connection. Please check the login details in database.properties.\n");
+        System.out.println("Would you like to reload the database.properties file?");
         return isYes(scanner.nextLine());
     }
     public static String chooseFile(){

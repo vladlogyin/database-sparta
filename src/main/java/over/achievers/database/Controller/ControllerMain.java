@@ -69,10 +69,16 @@ public class ControllerMain {
                     tries++;
                 } catch (FileNotFoundException ewwww) {
                     Logger.warn(ewwww.getMessage());
-                    MainViewer.printMessage("Credentials not found");
+                    MainViewer.printMessage("database.properties not found in the resources directory.");
                     if (MainViewer.userHasConfig()) {
                         String[] userCredentials = MainViewer.getUserCredentials();
                         ConnectionFactory.setConfig(userCredentials[0], userCredentials[1], userCredentials[2]);
+                        try{
+                            new ConnectionFactory().getConnection();
+                        } catch (Exception loginException){
+                            MainViewer.printMessage("Could not form a connection.\nPlease check your login details.\n");
+                            Logger.info("Could not form a connection from user credentials " + e.getMessage());
+                        }
                     } else
                         System.exit(0);
                 }
@@ -80,7 +86,7 @@ public class ControllerMain {
         }
         long startTime = System.nanoTime();
         try {
-            EmployeeDAO.truncateTable();
+            EmployeeDAO.remakeTable();
             EmployeeDAO.saveFromCollectionMultithreadedSuperFast(list, threads);
         } catch (SQLException e) {
             Logger.info("Problem when writing to table: " + e.getMessage());
