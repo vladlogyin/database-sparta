@@ -166,7 +166,7 @@ In order to use this application please clone repository onto your local machine
 ```sql
 CREATE schema employee;
 ```
-3. Create new tables (copy script)
+3. Create new tables (copy script) - no longer required
 ```sql
 DROP TABLE IF exists employee;
 CREATE table employee (
