@@ -4,6 +4,7 @@ package over.achievers.database.SQLServer;
 import over.achievers.database.model.Employee;
 import over.achievers.database.model.Logger;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,8 @@ public class EmployeeDAO {
 
     private static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE emp_number=?";
     private static final String TRUNCATE_TABLE = "truncate table employee";
+    private static  final String DROP_TABLE = "DROP TABLE IF EXISTS employee";
+    private static final String CREATE_TABLE = "CREATE TABLE employee ( emp_number INTEGER, name_preference VARCHAR(5), first_name VARCHAR(20), middle_name VARCHAR(1), last_name VARCHAR(20), gender CHAR, email VARCHAR(40), date_of_birth DATE, joining_date DATE, salary INTEGER, PRIMARY KEY (emp_number));";
 
     public static void saveFromCollectionMultithreadedSuperFast(Collection<Employee> employeeList, int threadCount)  throws SQLException{
         final Connection[] dbConnections = new Connection[threadCount];
@@ -124,6 +127,14 @@ public class EmployeeDAO {
         preparedStatement.execute();
         conn.close();
     }
+    public static void remakeTable() throws SQLException{
+        Connection conn = new ConnectionFactory().getConnection();
+        PreparedStatement dropTable = conn.prepareStatement(DROP_TABLE);
+        PreparedStatement createTable = conn.prepareStatement(CREATE_TABLE);
+        dropTable.execute();
+        createTable.execute();
+        conn.close();
+    }
 
     public static Employee getEmployeeByID (Integer id) throws SQLException{
         Connection conn = new ConnectionFactory().getConnection();
@@ -131,6 +142,7 @@ public class EmployeeDAO {
             PreparedStatement preparedStatement = conn.prepareStatement(GET_EMPLOYEE_BY_ID);
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
+
             rs.next();
             return new Employee()
                     .setEmpNumber(rs.getInt(1))

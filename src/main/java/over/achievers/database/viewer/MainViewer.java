@@ -52,7 +52,7 @@ public class MainViewer {
         }
     }
     public static boolean getViewChoice(){
-        System.out.println("Would you like to view the invalid records? (y)");
+        System.out.println("Would you like to view the invalid records? (y/n)");
         String userInput = scanner.nextLine();
         return isYes(userInput);
     }
@@ -87,7 +87,7 @@ public class MainViewer {
         System.out.println(msg);
     }
     public static boolean viewAgain(){
-        System.out.println("Would you like to view another? (y)");
+        System.out.println("Would you like to view another? (y/n)");
         String userChoice = scanner.nextLine();
         return isYes(userChoice);
     }
@@ -108,7 +108,7 @@ public class MainViewer {
         return 4;
     }
     public static boolean userHasConfig(){
-        System.out.println("Would you like to enter new credentials? (y)");
+        System.out.println("Would you like to enter new credentials? (y/n)");
         String userChoice = scanner.nextLine();
         return isYes(userChoice);
     }
@@ -123,6 +123,10 @@ public class MainViewer {
     static String getUrl(){
         System.out.println("Enter the url of the database - default - jdbc:mysql://localhost:3306/employee");
         String userChoice = scanner.nextLine();
+        if (userChoice == ""){
+            System.out.println("Using default url");
+            return "jdbc:mysql://localhost:3306/employee";
+        }
         return userChoice;
     }
     public static String getUsername(){
@@ -136,8 +140,29 @@ public class MainViewer {
         return userChoice;
     }
     public static boolean reloadProperties(){
-        System.out.println("Problem with loading resources/database");
-        System.out.println("Would you like to try loading resources/database.properties again? (y)");
+        System.out.println("Could not form a connection. Please check the login details in database.properties.\n");
+        System.out.println("Would you like to reload the database.properties file? (y/n)");
+        return isYes(scanner.nextLine());
+    }
+    public static String chooseFile(){
+        System.out.println("Which file would you like to use?\n1. EmployeeRecordsLarge.csv\n2. EmployeeRecords1.csv\n3. EmployeeRecords2.csv");
+        String userInput = scanner.nextLine().toLowerCase().trim();
+        switch(userInput){
+            case "1", "large", "EmployeeRecordsLarge", "EmployeeRecordsLarge.csv":
+                return "EmployeeRecordsLarge.csv";
+            case "2", "EmployeeRecords1", "EmployeeRecords1.csv":
+                return "EmployeeRecords1.csv";
+            case "3", "EmployeeRecords2", "EmployeeRecords2.csv":
+                return "EmployeeRecords2.csv";
+            default:
+                System.out.println("Invalid entry, defaulting to EmployeeRecordsLarge");
+                return "EmployeeRecordsLarge.csv";
+        }
+
+    }
+
+    public static boolean viewRecords(){
+        System.out.println("Would you like to view employee records? (y/n)");
         return isYes(scanner.nextLine());
     }
 

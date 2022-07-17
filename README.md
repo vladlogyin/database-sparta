@@ -46,28 +46,29 @@
 4. database.properties will be created on first application run
 
 # Usage
- - Run Main to start the application, you should see the following message printed in the terminal:
+ - Run Main to start the application, you should see the following interface:
 
- ![img_1.png](src/main/resources/images/img_program_start.png)
+![img.png](images/Interface.png)
+You can select the file you want to migrate or hit enter for default.
+ - Enter the number of threads you want to use and wait for the migration process to complete
 
- - Enter the number of threads and wait for the migration process to complete
+ ![img_2.png](images/writing_to_database_img.png)
 
- ![img_2.png](img_2.png)
+ - If there are any invalid records you should see the following message. Enter "yes" to view them.
 
- - You can view the records by responding with yes
-
- ![img_3.png](img_3.png)
+ ![img_3.png](images/invalid-records-viewing.png)
  - You should see the records below this line, hit enter to cycle through more data.
 
- ![img_5.png](img_5.png)
+ ![img_5.png](images/view_employee_records.png)
 - To view an employee, enter an employee id.
 
-- If your configuration is not in the resources folder, you can enter them manually:
+### Note
 
-![img.png](img_data_migration_complete.png)
+- If your configuration is not in the resources folder, you can enter it manually:
+![img_2.png](images/enter_new_configuration.png)
 
 ## Screenshots
-![resultsonFileOne](src/main/resources/images/showInvalid.PNG)
+![resultsonFileOne](images/showInvalid.PNG)
 
 ## Tests
 
@@ -148,7 +149,7 @@ In order to use this application please clone repository onto your local machine
 1. Use this [link](https://github.com/vladlogyin/database-sparta) (click on icon)<br>
 2. Open your IntelliJ (or any other IDE of your preference )<br>
 3. Create New > Project from version control<br>
-   ![creting new project](/src/main/resources/new%20project.png)<br> 
+   ![creting new project](/images/new%20project.png)<br> 
 4. Paste repo ([link](https://github.com/vladlogyin/database-sparta)) & select where project will be saved. Click clone on bottom.
 
 5. Once project is opened, load Maven build (pop up in right-hand corner)
@@ -165,7 +166,7 @@ In order to use this application please clone repository onto your local machine
 ```sql
 CREATE schema employee;
 ```
-3. Create new tables (copy script)
+3. Create new tables (copy script) - no longer required
 ```sql
 DROP TABLE IF exists employee;
 CREATE table employee (
@@ -227,10 +228,10 @@ public static void saveFromCollection(Collection<Employee> employeeList, Boolean
     }
 ```
 
-![stage1 resluts](src/main/resources/images/stage1.PNG)
+![stage1 resluts](images/stage1.PNG)
 
 Our next step was to set [auto-commit](https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/Connection.html#setAutoCommit(boolean)) to **false**.<br><br>
-![stage1 resluts](src/main/resources/images/stage2.PNG)
+![stage1 resluts](images/stage2.PNG)
 
 At this stage we discover that committing changes after whole batch is ready is more efficient than committing changes after each individual employee. <br>
 
@@ -282,7 +283,7 @@ public static void saveFromCollectionParallel(Collection<Employee> employeeList)
     }
 ```
 
-![multiThreadsResults](src/main/resources/images/MultiThread.PNG)
+![multiThreadsResults](images/MultiThread.PNG)
 
 **At this stage we reduce inserting time from 3.5 minutes down to around 14 sek.**
 
@@ -359,13 +360,13 @@ public static void saveFromCollectionParallelSuperFast(Collection<Employee> empl
 ```
 <br>
 
-![StringBuilderResults](src/main/resources/images/sbSigleThread.PNG)
+![StringBuilderResults](images/sbSigleThread.PNG)
 
 Last test we performed was to check SB approaches with multi-threading
 
-![StringBuilderResults](src/main/resources/images/sbMultiTrhead.PNG)
+![StringBuilderResults](images/sbMultiTrhead.PNG)
 
-![ThredsPerformanceGraph](src/main/resources/images/thredsCountGraph.png)
+![ThredsPerformanceGraph](images/thredsCountGraph.png)
 
 **All the test performed were based on:**
 - same PC.
