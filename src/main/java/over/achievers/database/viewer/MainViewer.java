@@ -52,7 +52,7 @@ public class MainViewer {
         }
     }
     public static boolean getViewChoice(){
-        System.out.println("Would you like to view the invalid records? (y)");
+        System.out.println("Would you like to view the invalid records? (y/n)");
         String userInput = scanner.nextLine();
         return isYes(userInput);
     }
@@ -87,7 +87,7 @@ public class MainViewer {
         System.out.println(msg);
     }
     public static boolean viewAgain(){
-        System.out.println("Would you like to view another? (y)");
+        System.out.println("Would you like to view another? (y/n)");
         String userChoice = scanner.nextLine();
         return isYes(userChoice);
     }
@@ -108,7 +108,7 @@ public class MainViewer {
         return 4;
     }
     public static boolean userHasConfig(){
-        System.out.println("Would you like to enter new credentials? (y)");
+        System.out.println("Would you like to enter new credentials? (y/n)");
         String userChoice = scanner.nextLine();
         return isYes(userChoice);
     }
@@ -141,7 +141,7 @@ public class MainViewer {
     }
     public static boolean reloadProperties(){
         System.out.println("Could not form a connection. Please check the login details in database.properties.\n");
-        System.out.println("Would you like to reload the database.properties file?");
+        System.out.println("Would you like to reload the database.properties file? (y/n)");
         return isYes(scanner.nextLine());
     }
     public static String chooseFile(){
@@ -162,7 +162,7 @@ public class MainViewer {
     }
 
     public static boolean viewRecords(){
-        System.out.println("Would you like to view employee records? (y)");
+        System.out.println("Would you like to view employee records? (y/n)");
         return isYes(scanner.nextLine());
     }
 
