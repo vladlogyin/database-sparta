@@ -1,6 +1,7 @@
 # Employee CSV Data Migration Project
 
 ## Table of Contents
+
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
 * [Features](#features)
@@ -14,6 +15,7 @@
 
 
 ## General Information
+
 - Application created as part of sparta global training
 - App allow to migrate data form ```CSV``` file onto database (MySql)
 - Command Line Interface
@@ -40,15 +42,18 @@
 - [Multi-Threading](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Thread.html)
 
 ## Features
+
 1. Validation each records individually for potential errors.
 2. Multi-threading support with option to chose number of threads to run.
 3. Retrieving individual record from database by ID
 4. database.properties will be created on first application run
 
 # Usage
+
  - Run Main to start the application, you should see the following interface:
 
 ![img.png](images/Interface.png)
+
 You can select the file you want to migrate or hit enter for default.
  - Enter the number of threads you want to use and wait for the migration process to complete
 
@@ -68,14 +73,15 @@ You can select the file you want to migrate or hit enter for default.
 ![img_2.png](images/enter_new_configuration.png)
 
 ## Screenshots
+
 ![resultsonFileOne](images/showInvalid.PNG)
 
 ## Tests
 
-**We tested individually each  validator to make sure they are fully operational**
+**We tested individually each validator to make sure they are fully operational**
 
 ```java
-@Test
+    @Test
     @DisplayName("Join date after DoB")
     void testJoiningDateAfterDoB(){
         // DoB: 12/12/1974  Joining Date: 6/4/2011
@@ -91,8 +97,9 @@ You can select the file you want to migrate or hit enter for default.
         Assertions.assertEquals(false, dateValidator.isValid(employee));
     }
 ```
+
 ```java
- @Test
+    @Test
     @DisplayName("DoB before future")
     void testDoBBeforeFuture(){
         // DoB: 7/11/1999
@@ -108,8 +115,9 @@ You can select the file you want to migrate or hit enter for default.
         Assertions.assertEquals(false, dobValidator.isValid(employee));
     }
 ```
+
 ```java
-@Test
+    @Test
     @DisplayName("Standard email")
     void testStandardEmail(){
         // Email: random123@hotmail.com
@@ -126,8 +134,9 @@ You can select the file you want to migrate or hit enter for default.
     }
 
 ```
+
 ```java
-@Test
+    @Test
     @DisplayName("Male")
     void testMaleGender(){
         // Gender: M
@@ -145,6 +154,7 @@ You can select the file you want to migrate or hit enter for default.
 ```
 
 ## Setup
+
 In order to use this application please clone repository onto your local machine
 1. Use this [link](https://github.com/vladlogyin/database-sparta) (click on icon)<br>
 2. Open your IntelliJ (or any other IDE of your preference )<br>
@@ -153,35 +163,36 @@ In order to use this application please clone repository onto your local machine
 4. Paste repo ([link](https://github.com/vladlogyin/database-sparta)) & select where project will be saved. Click clone on bottom.
 
 5. Once project is opened, load Maven build (pop up in right-hand corner)
-   ![maven_build](/images/Maven.PNG)
+    
+    ![maven_build](/images/Maven.PNG)
 
 6. Move to SQL Setup
 
 ## MySQL setup
 
 1. This software requires MySQL & MySQL workbench(or any other tool of your preference )
-2. Please make sure your MySql Server is running. (Task manager > Service ). If is not, right click on it > start
-![SqlServerRun](/images/SqlRunning.PNG)
-3. Create new schema (copy script)
-```sql
-CREATE schema employee;
-```
-3. Create new tables (copy script) - no longer required
-```sql
-DROP TABLE IF exists employee;
-CREATE table employee (
-emp_number integer primary KEY,
-name_preference varchar(5),
-first_name varchar(20),
-middle_name VARCHAR(1),
-last_name varchar(20),
-gender char,
-email VARCHAR(40),
-date_of_birth date,
-joining_date date,
-salary integer
-);
-```
+1. Please make sure your MySql Server is running. (Task manager > Service ). If is not, right click on it > start
+    ![SqlServerRun](/images/SqlRunning.PNG)
+1. Create new schema (copy script)
+    ```sql
+    CREATE schema employee;
+    ```
+1. Create new tables (copy script) - no longer required
+    ```sql
+    DROP TABLE IF exists employee;
+    CREATE table employee (
+    emp_number integer primary KEY,
+    name_preference varchar(5),
+    first_name varchar(20),
+    middle_name VARCHAR(1),
+    last_name varchar(20),
+    gender char,
+    email VARCHAR(40),
+    date_of_birth date,
+    joining_date date,
+    salary integer
+    );
+    ```
 
 ## Performance upgrades
 
@@ -376,7 +387,7 @@ Last test we performed was to check SB approaches with multi-threading
 ## Future Development
 
 1. Improve performance even further
-2. Implement functionality for user to insert own CSV file
+1. Implement functionality for user to insert own CSV file
 
 ## Contact
 
